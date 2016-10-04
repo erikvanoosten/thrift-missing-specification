@@ -2,8 +2,8 @@ Thrift: The Missing Specification
 =================================
 Erik van Oosten <e.vanoosten@grons.nl>
 
-This project is an attempt to plug the gap in http://thrift.apache.org[Thrift]
-documentation. The guide can be found at:
+This project is an attempt to plug a gap in http://thrift.apache.org[Thrift]
+documentation. The specification can be found at:
 
 http://erikvanoosten.github.io/thrift-missing-specification
 
