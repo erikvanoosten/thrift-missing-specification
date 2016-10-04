@@ -1,6 +1,6 @@
 #
 # Install asciidoc with:
-#  brew install asciidoc
+#  brew install asciidoc fop
 #  sudo easy_install Pygments
 #
 
@@ -28,9 +28,10 @@ pdf:
 		-a pygments \
 		-a iconsdir=$(iconsdir) \
 		-a pygments \
-		-o thrift-rpc-missing-specification.pdf \
 		--no-xmllint \
-		rpc-spec.asciidoc
+		rpc-spec.asciidoc && \
+	mv rpc-spec.pdf thrift-rpc-missing-specification.pdf \
+
 
 all: default pdf
 
