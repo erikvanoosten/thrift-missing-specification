@@ -1,6 +1,7 @@
 #
 # Install asciidoc with:
-#  brew install asciidoc fop
+#  brew install asciidoc
+#  brew install fop
 #  sudo easy_install Pygments
 #
 
