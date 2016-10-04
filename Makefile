@@ -16,8 +16,8 @@ default:
 		-a icons \
 		-a pygments \
 		-a iconsdir=$(iconsdir) \
-		-o index.html \
-		rpc-spec.asciidoc
+		rpc-spec.asciidoc && \
+	mv -f rpc-spec.html docs/index.html
 
 pdf:
 	a2x --fop \
@@ -30,13 +30,10 @@ pdf:
 		-a pygments \
 		--no-xmllint \
 		rpc-spec.asciidoc && \
-	mv rpc-spec.pdf thrift-rpc-missing-specification.pdf \
+	mv -f rpc-spec.pdf docs/thrift-rpc-missing-specification.pdf \
 
 
 all: default pdf
 
 clean:
-	rm -f index.html *.png
-
-publish: default pdf
-	./publish.sh
+	rm -f index.html *.png *.fo *.xml

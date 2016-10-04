@@ -1,0 +1,1966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="generator" content="AsciiDoc 8.6.9">
+<title>Thrift specification - Remote Procedure Call</title>
+<style type="text/css">
+/* Shared CSS for AsciiDoc xhtml11 and html5 backends */
+
+/* Default font. */
+body {
+  font-family: Georgia,serif;
+}
+
+/* Title font. */
+h1, h2, h3, h4, h5, h6,
+div.title, caption.title,
+thead, p.table.header,
+#toctitle,
+#author, #revnumber, #revdate, #revremark,
+#footer {
+  font-family: Arial,Helvetica,sans-serif;
+}
+
+body {
+  margin: 1em 5% 1em 5%;
+}
+
+a {
+  color: blue;
+  text-decoration: underline;
+}
+a:visited {
+  color: fuchsia;
+}
+
+em {
+  font-style: italic;
+  color: navy;
+}
+
+strong {
+  font-weight: bold;
+  color: #083194;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #527bbd;
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+}
+
+h1, h2, h3 {
+  border-bottom: 2px solid silver;
+}
+h2 {
+  padding-top: 0.5em;
+}
+h3 {
+  float: left;
+}
+h3 + * {
+  clear: left;
+}
+h5 {
+  font-size: 1.0em;
+}
+
+div.sectionbody {
+  margin-left: 0;
+}
+
+hr {
+  border: 1px solid silver;
+}
+
+p {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+ul, ol, li > p {
+  margin-top: 0;
+}
+ul > li     { color: #aaa; }
+ul > li > * { color: black; }
+
+pre {
+  padding: 0;
+  margin: 0;
+}
+
+#author {
+  color: #527bbd;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+#email {
+}
+#revnumber, #revdate, #revremark {
+}
+
+#footer {
+  font-size: small;
+  border-top: 2px solid silver;
+  padding-top: 0.5em;
+  margin-top: 4.0em;
+}
+#footer-text {
+  float: left;
+  padding-bottom: 0.5em;
+}
+#footer-badges {
+  float: right;
+  padding-bottom: 0.5em;
+}
+
+#preamble {
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+div.imageblock, div.exampleblock, div.verseblock,
+div.quoteblock, div.literalblock, div.listingblock, div.sidebarblock,
+div.admonitionblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+div.admonitionblock {
+  margin-top: 2.0em;
+  margin-bottom: 2.0em;
+  margin-right: 10%;
+  color: #606060;
+}
+
+div.content { /* Block element content. */
+  padding: 0;
+}
+
+/* Block element titles. */
+div.title, caption.title {
+  color: #527bbd;
+  font-weight: bold;
+  text-align: left;
+  margin-top: 1.0em;
+  margin-bottom: 0.5em;
+}
+div.title + * {
+  margin-top: 0;
+}
+
+td div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content + div.title {
+  margin-top: 0.0em;
+}
+
+div.sidebarblock > div.content {
+  background: #ffffee;
+  border: 1px solid #dddddd;
+  border-left: 4px solid #f0f0f0;
+  padding: 0.5em;
+}
+
+div.listingblock > div.content {
+  border: 1px solid #dddddd;
+  border-left: 5px solid #f0f0f0;
+  background: #f8f8f8;
+  padding: 0.5em;
+}
+
+div.quoteblock, div.verseblock {
+  padding-left: 1.0em;
+  margin-left: 1.0em;
+  margin-right: 10%;
+  border-left: 5px solid #f0f0f0;
+  color: #777777;
+}
+
+div.quoteblock > div.attribution {
+  padding-top: 0.5em;
+  text-align: right;
+}
+
+div.verseblock > pre.content {
+  font-family: inherit;
+  font-size: inherit;
+}
+div.verseblock > div.attribution {
+  padding-top: 0.75em;
+  text-align: left;
+}
+/* DEPRECATED: Pre version 8.2.7 verse style literal block. */
+div.verseblock + div.attribution {
+  text-align: left;
+}
+
+div.admonitionblock .icon {
+  vertical-align: top;
+  font-size: 1.1em;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #527bbd;
+  padding-right: 0.5em;
+}
+div.admonitionblock td.content {
+  padding-left: 0.5em;
+  border-left: 3px solid #dddddd;
+}
+
+div.exampleblock > div.content {
+  border-left: 3px solid #dddddd;
+  padding-left: 0.5em;
+}
+
+div.imageblock div.content { padding-left: 0; }
+span.image img { border-style: none; }
+a.image:visited { color: white; }
+
+dl {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+dt {
+  margin-top: 0.5em;
+  margin-bottom: 0;
+  font-style: normal;
+  color: navy;
+}
+dd > *:first-child {
+  margin-top: 0.1em;
+}
+
+ul, ol {
+    list-style-position: outside;
+}
+ol.arabic {
+  list-style-type: decimal;
+}
+ol.loweralpha {
+  list-style-type: lower-alpha;
+}
+ol.upperalpha {
+  list-style-type: upper-alpha;
+}
+ol.lowerroman {
+  list-style-type: lower-roman;
+}
+ol.upperroman {
+  list-style-type: upper-roman;
+}
+
+div.compact ul, div.compact ol,
+div.compact p, div.compact p,
+div.compact div, div.compact div {
+  margin-top: 0.1em;
+  margin-bottom: 0.1em;
+}
+
+tfoot {
+  font-weight: bold;
+}
+td > div.verse {
+  white-space: pre;
+}
+
+div.hdlist {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+div.hdlist tr {
+  padding-bottom: 15px;
+}
+dt.hdlist1.strong, td.hdlist1.strong {
+  font-weight: bold;
+}
+td.hdlist1 {
+  vertical-align: top;
+  font-style: normal;
+  padding-right: 0.8em;
+  color: navy;
+}
+td.hdlist2 {
+  vertical-align: top;
+}
+div.hdlist.compact tr {
+  margin: 0;
+  padding-bottom: 0;
+}
+
+.comment {
+  background: yellow;
+}
+
+.footnote, .footnoteref {
+  font-size: 0.8em;
+}
+
+span.footnote, span.footnoteref {
+  vertical-align: super;
+}
+
+#footnotes {
+  margin: 20px 0 20px 0;
+  padding: 7px 0 0 0;
+}
+
+#footnotes div.footnote {
+  margin: 0 0 5px 0;
+}
+
+#footnotes hr {
+  border: none;
+  border-top: 1px solid silver;
+  height: 1px;
+  text-align: left;
+  margin-left: 0;
+  width: 20%;
+  min-width: 100px;
+}
+
+div.colist td {
+  padding-right: 0.5em;
+  padding-bottom: 0.3em;
+  vertical-align: top;
+}
+div.colist td img {
+  margin-top: 0.3em;
+}
+
+@media print {
+  #footer-badges { display: none; }
+}
+
+#toc {
+  margin-bottom: 2.5em;
+}
+
+#toctitle {
+  color: #527bbd;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-top: 1.0em;
+  margin-bottom: 0.1em;
+}
+
+div.toclevel1, div.toclevel2, div.toclevel3, div.toclevel4 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+div.toclevel2 {
+  margin-left: 2em;
+  font-size: 0.9em;
+}
+div.toclevel3 {
+  margin-left: 4em;
+  font-size: 0.9em;
+}
+div.toclevel4 {
+  margin-left: 6em;
+  font-size: 0.9em;
+}
+
+span.aqua { color: aqua; }
+span.black { color: black; }
+span.blue { color: blue; }
+span.fuchsia { color: fuchsia; }
+span.gray { color: gray; }
+span.green { color: green; }
+span.lime { color: lime; }
+span.maroon { color: maroon; }
+span.navy { color: navy; }
+span.olive { color: olive; }
+span.purple { color: purple; }
+span.red { color: red; }
+span.silver { color: silver; }
+span.teal { color: teal; }
+span.white { color: white; }
+span.yellow { color: yellow; }
+
+span.aqua-background { background: aqua; }
+span.black-background { background: black; }
+span.blue-background { background: blue; }
+span.fuchsia-background { background: fuchsia; }
+span.gray-background { background: gray; }
+span.green-background { background: green; }
+span.lime-background { background: lime; }
+span.maroon-background { background: maroon; }
+span.navy-background { background: navy; }
+span.olive-background { background: olive; }
+span.purple-background { background: purple; }
+span.red-background { background: red; }
+span.silver-background { background: silver; }
+span.teal-background { background: teal; }
+span.white-background { background: white; }
+span.yellow-background { background: yellow; }
+
+span.big { font-size: 2em; }
+span.small { font-size: 0.6em; }
+
+span.underline { text-decoration: underline; }
+span.overline { text-decoration: overline; }
+span.line-through { text-decoration: line-through; }
+
+
+/*
+ * xhtml11 specific
+ *
+ * */
+
+tt {
+  font-family: monospace;
+  font-size: inherit;
+  color: navy;
+}
+
+div.tableblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+div.tableblock > table {
+  border: 3px solid #527bbd;
+}
+thead, p.table.header {
+  font-weight: bold;
+  color: #527bbd;
+}
+p.table {
+  margin-top: 0;
+}
+/* Because the table frame attribute is overriden by CSS in most browsers. */
+div.tableblock > table[frame="void"] {
+  border-style: none;
+}
+div.tableblock > table[frame="hsides"] {
+  border-left-style: none;
+  border-right-style: none;
+}
+div.tableblock > table[frame="vsides"] {
+  border-top-style: none;
+  border-bottom-style: none;
+}
+
+
+/*
+ * html5 specific
+ *
+ * */
+
+.monospaced {
+  font-family: monospace;
+  font-size: inherit;
+  color: navy;
+}
+
+table.tableblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+thead, p.tableblock.header {
+  font-weight: bold;
+  color: #527bbd;
+}
+p.tableblock {
+  margin-top: 0;
+}
+table.tableblock {
+  border-width: 3px;
+  border-spacing: 0px;
+  border-style: solid;
+  border-color: #527bbd;
+  border-collapse: collapse;
+}
+th.tableblock, td.tableblock {
+  border-width: 1px;
+  padding: 4px;
+  border-style: solid;
+  border-color: #527bbd;
+}
+
+table.tableblock.frame-topbot {
+  border-left-style: hidden;
+  border-right-style: hidden;
+}
+table.tableblock.frame-sides {
+  border-top-style: hidden;
+  border-bottom-style: hidden;
+}
+table.tableblock.frame-none {
+  border-style: hidden;
+}
+
+th.tableblock.halign-left, td.tableblock.halign-left {
+  text-align: left;
+}
+th.tableblock.halign-center, td.tableblock.halign-center {
+  text-align: center;
+}
+th.tableblock.halign-right, td.tableblock.halign-right {
+  text-align: right;
+}
+
+th.tableblock.valign-top, td.tableblock.valign-top {
+  vertical-align: top;
+}
+th.tableblock.valign-middle, td.tableblock.valign-middle {
+  vertical-align: middle;
+}
+th.tableblock.valign-bottom, td.tableblock.valign-bottom {
+  vertical-align: bottom;
+}
+
+
+/*
+ * manpage specific
+ *
+ * */
+
+body.manpage h1 {
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  border-top: 2px solid silver;
+  border-bottom: 2px solid silver;
+}
+body.manpage h2 {
+  border-style: none;
+}
+body.manpage div.sectionbody {
+  margin-left: 3em;
+}
+
+@media print {
+  body.manpage div#toc { display: none; }
+}
+
+
+/*
+ * Theme specific overrides of the preceding (asciidoc.css) CSS.
+ *
+ */
+body {
+  font-family: Garamond, Georgia, serif;
+  font-size: 17px;
+  color: #3E4349;
+  line-height: 1.3em;
+}
+h1, h2, h3, h4, h5, h6,
+div.title, caption.title,
+thead, p.table.header,
+#toctitle,
+#author, #revnumber, #revdate, #revremark,
+#footer {
+  font-family: Garmond, Georgia, serif;
+  font-weight: normal;
+  border-bottom-width: 0;
+  color: #3E4349;
+}
+div.title, caption.title { color: #596673; font-weight: bold; }
+h1 { font-size: 240%; }
+h2 { font-size: 180%; }
+h3 { font-size: 150%; }
+h4 { font-size: 130%; }
+h5 { font-size: 115%; }
+h6 { font-size: 100%; }
+#header h1 { margin-top: 0; }
+#toc {
+  color: #444444;
+  line-height: 1.5;
+  padding-top: 1.5em;
+}
+#toctitle {
+  font-size: 20px;
+}
+#toc a {
+    border-bottom: 1px dotted #999999;
+    color: #444444 !important;
+    text-decoration: none !important;
+}
+#toc a:hover {
+    border-bottom: 1px solid #6D4100;
+    color: #6D4100 !important;
+    text-decoration: none !important;
+}
+div.toclevel1 { margin-top: 0.2em; font-size: 16px; }
+div.toclevel2 { margin-top: 0.15em; font-size: 14px; }
+em, dt, td.hdlist1 { color: black; }
+strong { color: #3E4349; }
+a { color: #004B6B; text-decoration: none; border-bottom: 1px dotted #004B6B; }
+a:visited { color: #615FA0; border-bottom: 1px dotted #615FA0; }
+a:hover { color: #6D4100; border-bottom: 1px solid #6D4100; }
+div.tableblock > table, table.tableblock { border: 3px solid #E8E8E8; }
+th.tableblock, td.tableblock { border: 1px solid #E8E8E8; }
+ul > li > * { color: #3E4349; }
+pre, tt, .monospaced { font-family: Consolas,Menlo,'Deja Vu Sans Mono','Bitstream Vera Sans Mono',monospace; }
+tt, .monospaced { font-size: 0.9em; color: black;
+}
+div.exampleblock > div.content, div.sidebarblock > div.content, div.listingblock > div.content { border-width: 0 0 0 3px; border-color: #E8E8E8; }
+div.verseblock { border-left-width: 0; margin-left: 3em; }
+div.quoteblock { border-left-width: 3px; margin-left: 0; margin-right: 0;}
+div.admonitionblock td.content { border-left: 3px solid #E8E8E8; }
+
+.highlight .hll { background-color: #ffffcc }
+.highlight  { background: #f8f8f8; }
+.highlight .c { color: #408080; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #FF0000 } /* Error */
+.highlight .k { color: #008000; font-weight: bold } /* Keyword */
+.highlight .o { color: #666666 } /* Operator */
+.highlight .cm { color: #408080; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #BC7A00 } /* Comment.Preproc */
+.highlight .c1 { color: #408080; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #408080; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #FF0000 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #00A000 } /* Generic.Inserted */
+.highlight .go { color: #808080 } /* Generic.Output */
+.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #0040D0 } /* Generic.Traceback */
+.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #008000 } /* Keyword.Pseudo */
+.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #B00040 } /* Keyword.Type */
+.highlight .m { color: #666666 } /* Literal.Number */
+.highlight .s { color: #BA2121 } /* Literal.String */
+.highlight .na { color: #7D9029 } /* Name.Attribute */
+.highlight .nb { color: #008000 } /* Name.Builtin */
+.highlight .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.highlight .no { color: #880000 } /* Name.Constant */
+.highlight .nd { color: #AA22FF } /* Name.Decorator */
+.highlight .ni { color: #999999; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+.highlight .nf { color: #0000FF } /* Name.Function */
+.highlight .nl { color: #A0A000 } /* Name.Label */
+.highlight .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #19177C } /* Name.Variable */
+.highlight .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #bbbbbb } /* Text.Whitespace */
+.highlight .mf { color: #666666 } /* Literal.Number.Float */
+.highlight .mh { color: #666666 } /* Literal.Number.Hex */
+.highlight .mi { color: #666666 } /* Literal.Number.Integer */
+.highlight .mo { color: #666666 } /* Literal.Number.Oct */
+.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
+.highlight .sc { color: #BA2121 } /* Literal.String.Char */
+.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
+.highlight .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.highlight .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+.highlight .sx { color: #008000 } /* Literal.String.Other */
+.highlight .sr { color: #BB6688 } /* Literal.String.Regex */
+.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
+.highlight .ss { color: #19177C } /* Literal.String.Symbol */
+.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.highlight .vc { color: #19177C } /* Name.Variable.Class */
+.highlight .vg { color: #19177C } /* Name.Variable.Global */
+.highlight .vi { color: #19177C } /* Name.Variable.Instance */
+.highlight .il { color: #666666 } /* Literal.Number.Integer.Long */
+
+@media screen {
+  body {
+    max-width: 50em; /* approximately 80 characters wide */
+    margin-left: 16em;
+  }
+
+  #toc {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 13em;
+    padding: 0.5em;
+    padding-bottom: 1.5em;
+    margin: 0;
+    overflow: auto;
+    border-right: 3px solid #f8f8f8;
+    background-color: white;
+  }
+
+  #toc .toclevel1 {
+    margin-top: 0.5em;
+  }
+
+  #toc .toclevel2 {
+    margin-top: 0.25em;
+    display: list-item;
+    color: #aaaaaa;
+  }
+
+  #toctitle {
+    margin-top: 0.5em;
+  }
+}
+</style>
+<script type="text/javascript">
+/*<![CDATA[*/
+var asciidoc = {  // Namespace.
+
+/////////////////////////////////////////////////////////////////////
+// Table Of Contents generator
+/////////////////////////////////////////////////////////////////////
+
+/* Author: Mihai Bazon, September 2002
+ * http://students.infoiasi.ro/~mishoo
+ *
+ * Table Of Content generator
+ * Version: 0.4
+ *
+ * Feel free to use this script under the terms of the GNU General Public
+ * License, as long as you do not remove or alter this notice.
+ */
+
+ /* modified by Troy D. Hanson, September 2006. License: GPL */
+ /* modified by Stuart Rackham, 2006, 2009. License: GPL */
+
+// toclevels = 1..4.
+toc: function (toclevels) {
+
+  function getText(el) {
+    var text = "";
+    for (var i = el.firstChild; i != null; i = i.nextSibling) {
+      if (i.nodeType == 3 /* Node.TEXT_NODE */) // IE doesn't speak constants.
+        text += i.data;
+      else if (i.firstChild != null)
+        text += getText(i);
+    }
+    return text;
+  }
+
+  function TocEntry(el, text, toclevel) {
+    this.element = el;
+    this.text = text;
+    this.toclevel = toclevel;
+  }
+
+  function tocEntries(el, toclevels) {
+    var result = new Array;
+    var re = new RegExp('[hH]([1-'+(toclevels+1)+'])');
+    // Function that scans the DOM tree for header elements (the DOM2
+    // nodeIterator API would be a better technique but not supported by all
+    // browsers).
+    var iterate = function (el) {
+      for (var i = el.firstChild; i != null; i = i.nextSibling) {
+        if (i.nodeType == 1 /* Node.ELEMENT_NODE */) {
+          var mo = re.exec(i.tagName);
+          if (mo && (i.getAttribute("class") || i.getAttribute("className")) != "float") {
+            result[result.length] = new TocEntry(i, getText(i), mo[1]-1);
+          }
+          iterate(i);
+        }
+      }
+    }
+    iterate(el);
+    return result;
+  }
+
+  var toc = document.getElementById("toc");
+  if (!toc) {
+    return;
+  }
+
+  // Delete existing TOC entries in case we're reloading the TOC.
+  var tocEntriesToRemove = [];
+  var i;
+  for (i = 0; i < toc.childNodes.length; i++) {
+    var entry = toc.childNodes[i];
+    if (entry.nodeName.toLowerCase() == 'div'
+     && entry.getAttribute("class")
+     && entry.getAttribute("class").match(/^toclevel/))
+      tocEntriesToRemove.push(entry);
+  }
+  for (i = 0; i < tocEntriesToRemove.length; i++) {
+    toc.removeChild(tocEntriesToRemove[i]);
+  }
+
+  // Rebuild TOC entries.
+  var entries = tocEntries(document.getElementById("content"), toclevels);
+  for (var i = 0; i < entries.length; ++i) {
+    var entry = entries[i];
+    if (entry.element.id == "")
+      entry.element.id = "_toc_" + i;
+    var a = document.createElement("a");
+    a.href = "#" + entry.element.id;
+    a.appendChild(document.createTextNode(entry.text));
+    var div = document.createElement("div");
+    div.appendChild(a);
+    div.className = "toclevel" + entry.toclevel;
+    toc.appendChild(div);
+  }
+  if (entries.length == 0)
+    toc.parentNode.removeChild(toc);
+},
+
+
+/////////////////////////////////////////////////////////////////////
+// Footnotes generator
+/////////////////////////////////////////////////////////////////////
+
+/* Based on footnote generation code from:
+ * http://www.brandspankingnew.net/archive/2005/07/format_footnote.html
+ */
+
+footnotes: function () {
+  // Delete existing footnote entries in case we're reloading the footnodes.
+  var i;
+  var noteholder = document.getElementById("footnotes");
+  if (!noteholder) {
+    return;
+  }
+  var entriesToRemove = [];
+  for (i = 0; i < noteholder.childNodes.length; i++) {
+    var entry = noteholder.childNodes[i];
+    if (entry.nodeName.toLowerCase() == 'div' && entry.getAttribute("class") == "footnote")
+      entriesToRemove.push(entry);
+  }
+  for (i = 0; i < entriesToRemove.length; i++) {
+    noteholder.removeChild(entriesToRemove[i]);
+  }
+
+  // Rebuild footnote entries.
+  var cont = document.getElementById("content");
+  var spans = cont.getElementsByTagName("span");
+  var refs = {};
+  var n = 0;
+  for (i=0; i<spans.length; i++) {
+    if (spans[i].className == "footnote") {
+      n++;
+      var note = spans[i].getAttribute("data-note");
+      if (!note) {
+        // Use [\s\S] in place of . so multi-line matches work.
+        // Because JavaScript has no s (dotall) regex flag.
+        note = spans[i].innerHTML.match(/\s*\[([\s\S]*)]\s*/)[1];
+        spans[i].innerHTML =
+          "[<a id='_footnoteref_" + n + "' href='#_footnote_" + n +
+          "' title='View footnote' class='footnote'>" + n + "</a>]";
+        spans[i].setAttribute("data-note", note);
+      }
+      noteholder.innerHTML +=
+        "<div class='footnote' id='_footnote_" + n + "'>" +
+        "<a href='#_footnoteref_" + n + "' title='Return to text'>" +
+        n + "</a>. " + note + "</div>";
+      var id =spans[i].getAttribute("id");
+      if (id != null) refs["#"+id] = n;
+    }
+  }
+  if (n == 0)
+    noteholder.parentNode.removeChild(noteholder);
+  else {
+    // Process footnoterefs.
+    for (i=0; i<spans.length; i++) {
+      if (spans[i].className == "footnoteref") {
+        var href = spans[i].getElementsByTagName("a")[0].getAttribute("href");
+        href = href.match(/#.*/)[0];  // Because IE return full URL.
+        n = refs[href];
+        spans[i].innerHTML =
+          "[<a href='#_footnote_" + n +
+          "' title='View footnote' class='footnote'>" + n + "</a>]";
+      }
+    }
+  }
+},
+
+install: function(toclevels) {
+  var timerId;
+
+  function reinstall() {
+    asciidoc.footnotes();
+    if (toclevels) {
+      asciidoc.toc(toclevels);
+    }
+  }
+
+  function reinstallAndRemoveTimer() {
+    clearInterval(timerId);
+    reinstall();
+  }
+
+  timerId = setInterval(reinstall, 500);
+  if (document.addEventListener)
+    document.addEventListener("DOMContentLoaded", reinstallAndRemoveTimer, false);
+  else
+    window.onload = reinstallAndRemoveTimer;
+}
+
+}
+asciidoc.install(2);
+/*]]>*/
+</script>
+<meta name="description" content="The missing specification for Thrift RPC"/>
+<meta name="keywords" content="thrift,facebook,rpc,documentation,specification,binary protocol,compact protocol"/>
+
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-21971077-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</head>
+<body class="article">
+<div id="header">
+<h1>Thrift specification - Remote Procedure Call</h1>
+<span id="author">Erik van Oosten</span><br>
+<span id="email" class="monospaced">&lt;<a href="mailto:e.vanoosten@grons.nl">e.vanoosten@grons.nl</a>&gt;</span><br>
+<span id="revnumber">version 1.0,</span>
+<span id="revdate">2016-09-27</span>
+<div id="toc">
+  <div id="toctitle">Table of Contents</div>
+  <noscript><p><b>JavaScript must be enabled in your browser to display the table of contents.</b></p></noscript>
+</div>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph"><p>The missing specification.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_introduction">Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Thrift is a RPC mechanism that easily blends in with your code. It has a wonderful transport protocol that stays
+backward and forward compatible without the security pitfalls brought by
+<a href="https://www.contrastsecurity.com/security-influencers/serialization-must-die-act-1-kryo">seriapalooza</a>.</p></div>
+<div class="paragraph"><p>This document specifies the so far undocumented thrift RPC message exchange and the wire encoding of those messages in
+the binary protocol and the more modern compact protocol. Then the binary protocol and compact protocol are
+compared. Finally it describes the framed vs. unframed transport.</p></div>
+<div class="paragraph"><p>For background on Thrift see the <a href="https://thrift.apache.org/static/files/thrift-20070401.pdf">Thrift white paper (pdf)</a>.</p></div>
+<div class="paragraph"><p>This document is for Thrift implementers. Thrift users should read the <a href="https://thrift.apache.org/">thrift documentation</a>
+and the <a href="https://diwakergupta.github.io/thrift-missing-guide/">missing thrift guide</a>.</p></div>
+<div class="paragraph"><p>The information here is based on research in the Java implementation in the Apache thrift library (version 0.9.1
+and 0.9.3) and <a href="https://issues.apache.org/jira/browse/THRIFT-110">THRIFT-110 A more compact format</a>.
+Other implementation however, should behave the same.</p></div>
+<div class="paragraph"><p>Copyright &#169; 2016 Erik van Oosten</p></div>
+<div class="paragraph"><p><span class="image">
+<img alt="Creative Commons License"
+src="data:image/png;base64,
+iVBORw0KGgoAAAANSUhEUgAAAFAAAAAPCAMAAABEF7i9AAAAllBMVEUAAAD///+rsapERER3d3eI
+iIjMzMzu7u4iIiKUmZO6v7rKzsoODg4RERFVVVUNDQ0NDg0PEA8zMzNLTEtbXltmZmZydnF9gn2A
+gICPkI+ZmZmqqqq7u7vFxsXIzMgNDQwZGRkgICAhISEkJSMnKCcuMC4xMzE5Ozk7PTtBQkFCQkJD
+Q0Nna2eGhoaHh4ezuLLGysbd3d1wVGpAAAAA0klEQVR42q2T1xbCIAyGk0CXdlmto3XvPd7/5QRL
+1432WHI4XED4+PMHALQHag0JJBlXMNQScx2ibu9PdTnQcY3iErYl6oxbAo/rUrUJA6J5vx0wNNC0
+gVkMbBPZXtQ8Uf6qpNJwOf0EjmCKto+ce1aSIg9FzTO1/xlYyVeL34FDMC3ZFT+SNXOX6PEsBKm0
+rIOYPYuGClnsWTxBHtQV1gRhI4UUGJh6EAsPoxdedjUPK+dzT38DDyvNXXYW9wJ43mh4h6ItN8U7
+Ldv+FN1/WXO8Aed5CQIgC4KiAAAAAElFTkSuQmCC">
+</span>
+This work is licensed under the <a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.</p></div>
+<div class="paragraph"><p>Feedback and contributions to this specifications are very welcome. You can find the
+<a href="https://github.com/erikvanoosten/thrift-missing-specification">source code</a>
+on GitHub.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_thrift_remote_procedure_call_message_exchange">Thrift Remote Procedure Call Message exchange</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Both the binary protocol and the compact protocol assume a transport layer that exposes a bi-directional byte stream,
+for example a TCP socket. Both use the following exchange:</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+&#8658; Client sends a <span class="monospaced">Message</span> (type <span class="monospaced">Call</span> or <span class="monospaced">Oneway</span>). The TMessage contains some metadata and the name of the method
+  to invoke.
+</p>
+</li>
+<li>
+<p>
+&#8658; Client sends method arguments (a struct defined by the generate code).
+</p>
+</li>
+<li>
+<p>
+&#8656; Server sends a <span class="monospaced">Message</span> (type <span class="monospaced">Reply</span> or <span class="monospaced">Exception</span>) to start the response.
+</p>
+</li>
+<li>
+<p>
+&#8656; Server sends a struct containing the method result or exception.
+</p>
+</li>
+</ol></div>
+<div class="paragraph"><p>The pattern is a simple half duplex protocol where the parties alternate in sending a <span class="monospaced">Message</span> followed by a struct.
+What these are is described below.</p></div>
+<div class="paragraph"><p>Although the standard Apache Thrift Java clients do not support pipelining (sending multiple requests without waiting
+for an response), the standard Apache Thrift Java servers do support it.</p></div>
+<div class="sect2">
+<h3 id="_message">Message</h3>
+<div class="paragraph"><p>A <strong>message</strong> contains:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<em>Name</em>, a string.
+</p>
+</li>
+<li>
+<p>
+<em>Message type</em>, a message types, one of <span class="monospaced">Call</span>, <span class="monospaced">Reply</span>, <span class="monospaced">Exception</span> and <span class="monospaced">Oneway</span>.
+</p>
+</li>
+<li>
+<p>
+<em>Sequence id</em>, a signed int32 integer.
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>The <strong>sequence id</strong> is a simple message id assigned by the client. The server will use the same sequence id in the
+message of the response. The client uses this number to detect out of order responses. Each client has an int32 field
+which is increased for each message. The sequence id simply wraps around when it overflows.</p></div>
+<div class="paragraph"><p>The <strong>name</strong> indicates the service method name to invoke. The server copies the name in the response message.</p></div>
+<div class="paragraph"><p>When the <strong>multiplexed protocol</strong> is used, the name contains the service name, a colon (<span class="monospaced">:</span>) and the method name. The
+multiplexed protocol is not compatible with other protocols.</p></div>
+<div class="paragraph"><p>The <strong>message type</strong> indicates what kind of message is sent. Clients send requests with messages of type <span class="monospaced">Call</span> or
+<span class="monospaced">Oneway</span> (step 1 in the protocol exchange). Servers send responses with messages of type <span class="monospaced">Exception</span> or <span class="monospaced">Reply</span> (step
+3).</p></div>
+<div class="paragraph"><p>Type <span class="monospaced">Reply</span> is used when the service method completes normally. That is, it returns a value or it throws one of the
+exceptions defined in the Thrift IDL file.</p></div>
+<div class="paragraph"><p>Type <span class="monospaced">Exception</span> is used for other exceptions. That is: when the service method throws an exception that is not declared
+in the Thrift IDL file, or some other part of the Thrift stack throws an exception. For example when the server could
+not encode or decode a message or struct.</p></div>
+<div class="paragraph"><p>In the Java implementation (0.9.3) there is different behavior for the synchronous and asynchronous server. In the async
+server all exceptions are send as a <span class="monospaced">TApplicationException</span> (see <em>Response struct</em> below). In the synchronous Java
+implementation only (undeclared) exceptions that extend <span class="monospaced">TException</span> are send as a <span class="monospaced">TApplicationException</span>. Unchecked
+exceptions lead to an immediate close of the connection.</p></div>
+<div class="paragraph"><p>Type <span class="monospaced">Oneway</span> is only used starting from Apache Thrift 0.9.3. Earlier versions do <em>not</em> send messages of type <span class="monospaced">Oneway</span>,
+even for service methods defined with the <span class="monospaced">oneway</span> modifier.</p></div>
+<div class="paragraph"><p>When client sends a request with type <span class="monospaced">Oneway</span>, the server must <em>not</em> send a response (steps 3 and 4 are skipped). Note
+that the Thrift IDL enforces a return type of <span class="monospaced">void</span> and does not allow exceptions for oneway services.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_request_struct">Request struct</h3>
+<div class="paragraph"><p>The struct that follows the message of type <span class="monospaced">Call</span> or <span class="monospaced">Oneway</span> contains the arguments of the service method. The
+argument ids correspond to the field ids. The name of the struct is the name of the method with <span class="monospaced">_args</span> appended.
+For methods without arguments an struct is sent without fields.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_response_struct">Response struct</h3>
+<div class="paragraph"><p>The struct that follows the message of type <span class="monospaced">Reply</span> are structs in which exactly 1 of the following fields is encoded:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+A field with name <span class="monospaced">success</span> and id <span class="monospaced">0</span>, used in case the method completed normally.
+</p>
+</li>
+<li>
+<p>
+An exception field, name and id are as defined in the <span class="monospaced">throws</span> clause in the Thrift IDL&#8217;s service method definition.
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>When the message is of type <span class="monospaced">Exception</span> the struct is encoded as if it was declared by the following IDL:</p></div>
+<div class="literalblock">
+<div class="content monospaced">
+<pre>exception TApplicationException {
+  1: string message,
+  2: i32 type
+}</pre>
+</div></div>
+<div class="paragraph"><p>The following exception types are defined in the java implementation (0.9.3):</p></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+unknown (0)
+</dt>
+<dd>
+<p>
+used in case the type from the peer is unknown.
+</p>
+</dd>
+<dt class="hdlist1">
+unknown method (1)
+</dt>
+<dd>
+<p>
+used in case the method requested by the client is unknown by the server.
+</p>
+</dd>
+<dt class="hdlist1">
+invalid message type (2)
+</dt>
+<dd>
+<p>
+no usage was found.
+</p>
+</dd>
+<dt class="hdlist1">
+wrong method name (3)
+</dt>
+<dd>
+<p>
+no usage was found.
+</p>
+</dd>
+<dt class="hdlist1">
+bad sequence id (4)
+</dt>
+<dd>
+<p>
+used internally by the client to indicate a wrong sequence id in the response.
+</p>
+</dd>
+<dt class="hdlist1">
+missing result (5)
+</dt>
+<dd>
+<p>
+used internally by the client to indicate a response without any field (result nor exception).
+</p>
+</dd>
+<dt class="hdlist1">
+internal error (6)
+</dt>
+<dd>
+<p>
+used when the server throws an exception that is not declared in the Thrift IDL file.
+</p>
+</dd>
+<dt class="hdlist1">
+protocol error (7)
+</dt>
+<dd>
+<p>
+used when something goes wrong during decoding. For example when a list is too long or a required field is missing.
+</p>
+</dd>
+<dt class="hdlist1">
+invalid transform (8)
+</dt>
+<dd>
+<p>
+no usage was found.
+</p>
+</dd>
+<dt class="hdlist1">
+invalid protocol (9)
+</dt>
+<dd>
+<p>
+no usage was found.
+</p>
+</dd>
+<dt class="hdlist1">
+unsupported client type (10)
+</dt>
+<dd>
+<p>
+no usage was found.
+</p>
+</dd>
+</dl></div>
+<div class="sect3">
+<h4 id="_struct">Struct</h4>
+<div class="paragraph"><p>A <strong>struct</strong> is a sequence of zero or more fields, followed by a stop field. Each field starts with a field header and
+is followed by the encoded field value. The encoding can be summarized by the following BNF:</p></div>
+<div class="literalblock">
+<div class="content monospaced">
+<pre>struct        ::= ( field-header field-value )* stop-field
+field-header  ::= field-type field-id</pre>
+</div></div>
+<div class="paragraph"><p>Because each field header contains the field-id (as defined by the Thrift IDL file), the fields can be encoded in any
+order. Thrift&#8217;s type system is not extensible; you can only encode the primitive types and structs. Therefore it is also
+possible to handle unknown fields while decoding; these are simply ignored. While decoding, the field type can be used to
+determine how to decode the field value.</p></div>
+<div class="paragraph"><p>Note that the field name is not encoded so field renames in the IDL do not affect forward and backward compatibility.</p></div>
+<div class="paragraph"><p>The default Java implementation (Apache Thrift 0.9.1) has undefined behavior when it tries to decode a field that has
+another field-type then what is expected. Theoretically this could be detected at the cost of some additional checking.
+Other implementation may perform this check and then either ignore the field, return a protocol exception, or perform a
+silent type cast.</p></div>
+<div class="paragraph"><p>A <strong>union</strong> is encoded exactly the same as a struct with the additional restriction that at most 1 field may be encoded.</p></div>
+<div class="paragraph"><p>An <strong>exception</strong> is encoded exactly the same as a struct.</p></div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_thrift_binary_protocol_encoding">Thrift Binary protocol encoding</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_integer_encoding">Integer encoding</h3>
+<div class="paragraph"><p>In the <em>binary protocol</em> integers are encoded with the most significant byte first (big endian byte order, aka network
+order). An <span class="monospaced">int8</span> needs 1 byte, an <span class="monospaced">int16</span> 2, an <span class="monospaced">int32</span> 4 and an <span class="monospaced">int64</span> needs 8 bytes.</p></div>
+<div class="paragraph"><p>The CPP version has the option to use the binary protocol with little endian order. Little endian gives a small but
+noticeable performance boost because contemporary CPUs use little endian when storing integers to RAM.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_enum_encoding">Enum encoding</h3>
+<div class="paragraph"><p>The generated code encodes enums by taking the ordinal value and then encoding that as an int32.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_binary_encoding">Binary encoding</h3>
+<div class="paragraph"><p>Binary is sent as follows:</p></div>
+<div class="literalblock">
+<div class="content monospaced">
+<pre>Binary protocol, binary data, 4+ bytes:
++--------+--------+--------+--------+--------+...+--------+
+| byte length                       | bytes                |
++--------+--------+--------+--------+--------+...+--------+</pre>
+</div></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<span class="monospaced">byte length</span> is the length of the byte array, a signed 32 bit integer encoded in network (big endian) order (must be &gt;= 0).
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">bytes</span> are the bytes of the byte array.
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>Be default the length is limited to 2147483647, however some implementation have the option to lower the limit.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_string_encoding">String encoding</h3>
+<div class="paragraph"><p>Strings are first encoded to UTF-8, and then send as binary.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_double_encoding">Double encoding</h3>
+<div class="paragraph"><p>Values of type <span class="monospaced">double</span> are first converted to an int64 according to the IEEE 754 floating-point "double format" bit
+layout. Most run-times provide primitives for the conversion. The int64 is encoded using 8 bytes in big endian order.</p></div>
+<div class="paragraph"><p>This is some scala code showing the JVM primitives to convert from double to int64 and back:</p></div>
+<div class="listingblock">
+<div class="content"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="n">doubleToInt64</span><span class="o">(</span><span class="n">d</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Long</span> <span class="o">=</span> <span class="n">java</span><span class="o">.</span><span class="n">lang</span><span class="o">.</span><span class="nc">Double</span><span class="o">.</span><span class="n">doubleToLongBits</span><span class="o">(</span><span class="n">d</span><span class="o">)</span>
+<span class="k">def</span> <span class="n">int64ToDouble</span><span class="o">(</span><span class="n">l</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="n">java</span><span class="o">.</span><span class="n">lang</span><span class="o">.</span><span class="nc">Double</span><span class="o">.</span><span class="n">longBitsToDouble</span><span class="o">(</span><span class="n">l</span><span class="o">)</span>
+</pre></div></div></div>
+</div>
+<div class="sect2">
+<h3 id="_boolean_encoding">Boolean encoding</h3>
+<div class="paragraph"><p>Values of <span class="monospaced">bool</span> type are first converted to an int8. True is converted to <span class="monospaced">1</span>, false to <span class="monospaced">0</span>.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_message_encoding">Message encoding</h3>
+<div class="paragraph"><p>A <span class="monospaced">Message</span> can be encoded in two different ways, the modern <em>strict encoding</em>, or the nameless old encoding.</p></div>
+<div class="literalblock">
+<div class="content monospaced">
+<pre>Binary protocol Message, strict encoding, 12+ bytes:
++--------+--------+--------+--------+--------+--------+--------+--------+--------+...+--------+--------+--------+--------+--------+
+|1vvvvvvv|vvvvvvvv|unused  |00000mmm| name length                       | name                | seq id                            |
++--------+--------+--------+--------+--------+--------+--------+--------+--------+...+--------+--------+--------+--------+--------+</pre>
+</div></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<span class="monospaced">vvvvvvvvvvvvvvv</span> is the version, an unsigned 15 bit number fixed to <span class="monospaced">1</span> (in binary: <span class="monospaced">000 0000 0000 0001</span>).
+  The leading bit is <span class="monospaced">1</span>.
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">unused</span> is an ignored byte.
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">mmm</span> is the message type, an unsigned 3 bit integer. The 5 leading bits must be <span class="monospaced">0</span> as some clients (checked for
+  java in 0.9.1) take the whole byte.
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">name length</span> is the byte length of the name field, a signed 32 bit integer encoded in network (big endian) order (must be &gt;= 0).
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">name</span> is the method name, a UTF-8 encoded string.
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">seq id</span> is the sequence id, a signed 32 bit integer encoded in network (big endian) order.
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>The second, older encoding (aka non-strict) is:</p></div>
+<div class="literalblock">
+<div class="content monospaced">
+<pre>Binary protocol Message, old encoding, 9+ bytes:
++--------+--------+--------+--------+--------+...+--------+--------+--------+--------+--------+--------+
+| name length                       | name                |00000mmm| seq id                            |
++--------+--------+--------+--------+--------+...+--------+--------+--------+--------+--------+--------+</pre>
+</div></div>
+<div class="paragraph"><p>Where <span class="monospaced">name length</span>, <span class="monospaced">name</span>, <span class="monospaced">mmm</span>, <span class="monospaced">seq id</span> are as above.</p></div>
+<div class="paragraph"><p>Because <span class="monospaced">name length</span> must be positive (therefore the first bit is always <span class="monospaced">0</span>), the first bit allows the receiver to see
+whether the strict format or the old format is used. Therefore a server and client using the different variants of the
+binary protocol can transparently talk with each other. However, when strict mode is enforced, the old format is
+rejected.</p></div>
+<div class="paragraph"><p>Message types are encoded with the following values:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<em>Call</em>: 1
+</p>
+</li>
+<li>
+<p>
+<em>Reply</em>: 2
+</p>
+</li>
+<li>
+<p>
+<em>Exception</em>: 3
+</p>
+</li>
+<li>
+<p>
+<em>Oneway</em>: 4
+</p>
+</li>
+</ul></div>
+</div>
+<div class="sect2">
+<h3 id="_struct_encoding">Struct encoding</h3>
+<div class="paragraph"><p>In the binary protocol field headers and the stop field are encoded as follows:</p></div>
+<div class="literalblock">
+<div class="content monospaced">
+<pre>Binary protocol field header and field value:
++--------+--------+--------+--------+...+--------+
+|tttttttt| field id        | field value         |
++--------+--------+--------+--------+...+--------+
+
+Binary protocol stop field:
++--------+
+|00000000|
++--------+</pre>
+</div></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<span class="monospaced">tttttttt</span> the field-type, a signed 8 bit integer.
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">field id</span> the field-id, a signed 16 bit integer in big endian order.
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">field-value</span> the encoded field value.
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>The following field-types are used:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<span class="monospaced">bool</span>, encoded as <span class="monospaced">2</span>
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">byte</span>, encoded as <span class="monospaced">3</span>
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">double</span>, encoded as <span class="monospaced">4</span>
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">i16</span>, encoded as <span class="monospaced">6</span>
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">i32</span>, encoded as <span class="monospaced">8</span>
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">i64</span>, encoded as <span class="monospaced">10</span>
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">string</span>, used for binary and string fields, encoded as <span class="monospaced">11</span>
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">struct</span>, used for structs and union fields, encoded as <span class="monospaced">12</span>
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">map</span>, encoded as <span class="monospaced">13</span>
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">set</span>, encoded as <span class="monospaced">14</span>
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">list</span>, encoded as <span class="monospaced">15</span>
+</p>
+</li>
+</ul></div>
+</div>
+<div class="sect2">
+<h3 id="_list_and_set">List and Set</h3>
+<div class="paragraph"><p>List and sets are encoded the same: a header indicating the size and the element-type of the elements, followed by the
+encoded elements.</p></div>
+<div class="literalblock">
+<div class="content monospaced">
+<pre>Binary protocol list (5+ bytes) and elements:
++--------+--------+--------+--------+--------+--------+...+--------+
+|tttttttt| size                              | elements            |
++--------+--------+--------+--------+--------+--------+...+--------+</pre>
+</div></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<span class="monospaced">tttttttt</span> is the element-type, encoded as an int8
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">size</span> is the size, encoded as an int32, positive values only
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">elements</span> the element values
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>The element-type values are the same as field-types. The full list is included in the struct section above.</p></div>
+<div class="paragraph"><p>The maximum list/set size is configurable. By default there is no limit (meaning the limit is the maximum int32 value:
+2147483647).</p></div>
+</div>
+<div class="sect2">
+<h3 id="_map">Map</h3>
+<div class="paragraph"><p>Maps are encoded with a header indicating the size, the element-type of the keys and the element-type of the elements,
+followed by the encoded elements. The encoding follows this BNF:</p></div>
+<div class="literalblock">
+<div class="content monospaced">
+<pre>map  ::=  key-element-type value-element-type size ( key value )*</pre>
+</div></div>
+<div class="literalblock">
+<div class="content monospaced">
+<pre>Binary protocol map (6+ bytes) and key value pairs:
++--------+--------+--------+--------+--------+--------+--------+...+--------+
+|kkkkkkkk|vvvvvvvv| size                              | key value pairs     |
++--------+--------+--------+--------+--------+--------+--------+...+--------+</pre>
+</div></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<span class="monospaced">kkkkkkkk</span> is the key element-type, encoded as an int8
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">vvvvvvvv</span> is the value element-type, encoded as an int8
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">size</span> is the size of the map, encoded as an int32, positive values only
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">key value pairs</span> are the encoded keys and values
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>The element-type values are the same as field-types. The full list is included in the struct section above.</p></div>
+<div class="paragraph"><p>The maximum map size is configurable. By default there is no limit (meaning the limit is the maximum int32 value:
+2147483647).</p></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_thrift_compact_protocol_encoding">Thrift compact protocol encoding</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_integer_encoding_2">Integer encoding</h3>
+<div class="paragraph"><p>The <em>compact protocol</em> uses multiple encodings for ints: the <em>zigzag int</em>, and the <em>var int</em>.</p></div>
+<div class="paragraph"><p>Values of type <span class="monospaced">int32</span> and <span class="monospaced">int64</span> are first transformed to a <strong>zigzag int</strong>. A zigzag int folds positive and negative
+numbers into the positive number space. When we read 0, 1, 2, 3, 4 or 5 from the wire, this is translated to 0, -1, 1,
+-2 or 2 respectively. Here are the (Scala) formulas to convert from int32/int64 to a zigzag int and back:</p></div>
+<div class="listingblock">
+<div class="content"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="n">int32ToZigZag</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="o">(</span><span class="n">n</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span><span class="o">)</span> <span class="o">^</span> <span class="o">(</span><span class="n">n</span> <span class="o">&gt;&gt;</span> <span class="mi">31</span><span class="o">)</span>
+<span class="k">def</span> <span class="n">zigzagToInt32</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="o">(</span><span class="n">n</span> <span class="o">&gt;&gt;&gt;</span> <span class="mi">1</span><span class="o">)</span> <span class="o">^</span> <span class="o">-</span> <span class="o">(</span><span class="n">n</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="o">)</span>
+<span class="k">def</span> <span class="n">int64ToZigZag</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">Long</span> <span class="o">=</span> <span class="o">(</span><span class="n">n</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span><span class="o">)</span> <span class="o">^</span> <span class="o">(</span><span class="n">n</span> <span class="o">&gt;&gt;</span> <span class="mi">63</span><span class="o">)</span>
+<span class="k">def</span> <span class="n">zigzagToint64</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">Long</span> <span class="o">=</span> <span class="o">(</span><span class="n">n</span> <span class="o">&gt;&gt;&gt;</span> <span class="mi">1</span><span class="o">)</span> <span class="o">^</span> <span class="o">-</span> <span class="o">(</span><span class="n">n</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="o">)</span>
+</pre></div></div></div>
+<div class="paragraph"><p>The zigzag int is then encoded as a <strong>var int</strong>. Var ints take 1 to 5 bytes (int32) or 1 to 10 bytes (int64). The most
+significant bit of each byte indicates if more bytes follow. The concatenation of the least significant 7 bits from each
+byte form the number, where the first byte has the most significant bits (so they are in big endian or network order).</p></div>
+<div class="paragraph"><p>Var ints are sometimes used directly inside the compact protocol to represent numbers that are usually positive.</p></div>
+<div class="paragraph"><p>To encode an <span class="monospaced">int16</span> as zigzag int, it is first converted to an <span class="monospaced">int32</span> and then encoded as such. The type <span class="monospaced">int8</span> simply
+uses a single byte as in the binary protocol.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_enum_encoding_2">Enum encoding</h3>
+<div class="paragraph"><p>The generated code encodes enums by taking the ordinal value and then encoding that just like an int32.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_binary_encoding_2">Binary encoding</h3>
+<div class="paragraph"><p>Binary is sent as follows:</p></div>
+<div class="literalblock">
+<div class="content monospaced">
+<pre>Binary protocol, binary data, 1+ bytes:
++--------+...+--------+--------+...+--------+
+| byte length         | bytes               |
++--------+...+--------+--------+...+--------+</pre>
+</div></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<span class="monospaced">byte length</span> is the length of the byte array, using var int encoding (must be &gt;= 0).
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">bytes</span> are the bytes of the byte array.
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>Be default the length is limited to 2147483647, however some implementation have the option to lower the limit.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_string_encoding_2">String encoding</h3>
+<div class="paragraph"><p>Strings are first encoded to UTF-8, and then send as binary.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_double_encoding_2">Double encoding</h3>
+<div class="paragraph"><p>Values of type <span class="monospaced">double</span> are first converted to an int64 according to the IEEE 754 floating-point "double format" bit
+layout. Most run-times provide primitives for the conversion. The int64 is encoded using 8 bytes in big endian order.</p></div>
+<div class="paragraph"><p>This is some scala code showing the JVM primitives to convert from double to int64 and back:</p></div>
+<div class="listingblock">
+<div class="content"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="n">doubleToInt64</span><span class="o">(</span><span class="n">d</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Long</span> <span class="o">=</span> <span class="n">java</span><span class="o">.</span><span class="n">lang</span><span class="o">.</span><span class="nc">Double</span><span class="o">.</span><span class="n">doubleToLongBits</span><span class="o">(</span><span class="n">d</span><span class="o">)</span>
+<span class="k">def</span> <span class="n">int64ToDouble</span><span class="o">(</span><span class="n">l</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="n">java</span><span class="o">.</span><span class="n">lang</span><span class="o">.</span><span class="nc">Double</span><span class="o">.</span><span class="n">longBitsToDouble</span><span class="o">(</span><span class="n">l</span><span class="o">)</span>
+</pre></div></div></div>
+</div>
+<div class="sect2">
+<h3 id="_boolean_encoding_2">Boolean encoding</h3>
+<div class="paragraph"><p>Booleans are encoded differently depending on whether it is a field value (in a struct) or an element value (in a set,
+list or map). Field values are encoded directly in the field header. Element values of type bool are sent as an int8;
+true as <span class="monospaced">1</span> and false as <span class="monospaced">0</span>.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_message_encoding_2">Message encoding</h3>
+<div class="paragraph"><p>A <span class="monospaced">Message</span> on the wire looks as follows:</p></div>
+<div class="literalblock">
+<div class="content monospaced">
+<pre>Compact protocol Message (4+ bytes):
++--------+--------+--------+...+--------+--------+...+--------+--------+...+--------+
+|pppppppp|mmmvvvvv| seq id              | name length         | name                |
++--------+--------+--------+...+--------+--------+...+--------+--------+...+--------+</pre>
+</div></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<span class="monospaced">pppppppp</span> is the protocol id, fixed to <span class="monospaced">1000 0010</span> or <span class="monospaced">0x82</span>.
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">mmm</span> is the message type, an unsigned 3 bit integer.
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">vvvvv</span> is the version, an unsigned 5 bit integer, fixed to <span class="monospaced">00001</span>.
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">seq id</span> is the sequence id, a signed 32 bit integer encoded as a var int.
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">name length</span> is the byte length of the name field, a signed 32 bit integer encoded as a var int (must be &gt;= 0).
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">name</span> is the method name to invoke, a UTF-8 encoded string.
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>Message types are encoded with the following values:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<em>Call</em>: 1
+</p>
+</li>
+<li>
+<p>
+<em>Reply</em>: 2
+</p>
+</li>
+<li>
+<p>
+<em>Exception</em>: 3
+</p>
+</li>
+<li>
+<p>
+<em>Oneway</em>: 4
+</p>
+</li>
+</ul></div>
+</div>
+<div class="sect2">
+<h3 id="_struct_encoding_2">Struct encoding</h3>
+<div class="literalblock">
+<div class="content monospaced">
+<pre>Compact protocol field header (short form) and field value:
++--------+--------+...+--------+
+|ddddtttt| field value         |
++--------+--------+...+--------+
+
+Compact protocol field header (1 to 3 bytes, long form) and field value:
++--------+--------+...+--------+--------+...+--------+
+|0000tttt| field id            | field value         |
++--------+--------+...+--------+--------+...+--------+
+
+Compact protocol stop field:
++--------+
+|00000000|
++--------+</pre>
+</div></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<span class="monospaced">dddd</span> is the field id delta, an unsigned 4 bits integer (strictly positive, e.g. &gt; 0).
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">tttt</span> is field-type id, an unsigned 4 bit integer.
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">field id</span> the field id, a signed 16 bit integer encoded as zigzag int.
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">field-value</span> the encoded field value.
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>The field id delta can be computed by <span class="monospaced">current-field-id - previous-field-id</span>, or just <span class="monospaced">current-field-id</span> if this is the
+first of the struct. The short form <em>should</em> be used when the field id delta is in the range 1 - 15 (inclusive).</p></div>
+<div class="paragraph"><p>The following field-types/values can be encoded:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<span class="monospaced">bool</span> with value <span class="monospaced">true</span>, encoded as <span class="monospaced">1</span>
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">bool</span> with value <span class="monospaced">false</span>, encoded as <span class="monospaced">2</span>
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">byte</span>, encoded as <span class="monospaced">3</span>
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">i16</span>, encoded as <span class="monospaced">4</span>
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">i32</span>, encoded as <span class="monospaced">5</span>
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">i64</span>, encoded as <span class="monospaced">6</span>
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">double</span>, encoded as <span class="monospaced">7</span>
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">binary</span>, used for binary and string fields, encoded as <span class="monospaced">8</span>
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">list</span>, encoded as <span class="monospaced">9</span>
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">set</span>, encoded as <span class="monospaced">10</span>
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">map</span>, encoded as <span class="monospaced">11</span>
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">struct</span>, used for both structs and union fields, encoded as <span class="monospaced">12</span>
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>Note that because there are 2 specific field types for the boolean values, the encoding of a boolean field value has no
+length (0 bytes).</p></div>
+</div>
+<div class="sect2">
+<h3 id="_list_and_set_2">List and Set</h3>
+<div class="paragraph"><p>List and sets are encoded the same: a header indicating the size and the element-type of the elements, followed by the
+encoded elements.</p></div>
+<div class="literalblock">
+<div class="content monospaced">
+<pre>Compact protocol list header (1 byte, short form) and elements:
++--------+--------+...+--------+
+|sssstttt| elements            |
++--------+--------+...+--------+
+
+Compact protocol list header (2+ bytes, long form) and elements:
++--------+--------+...+--------+--------+...+--------+
+|1111tttt| size                | elements            |
++--------+--------+...+--------+--------+...+--------+</pre>
+</div></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<span class="monospaced">ssss</span> is the size, 4 bit unsigned int, values <span class="monospaced">0</span> - <span class="monospaced">14</span>
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">tttt</span> is the element-type, a 4 bit unsigned int
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">size</span> is the size, a var int (int32), positive values <span class="monospaced">15</span> or higher
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">elements</span> are the encoded elements
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>The short form <em>should</em> be used when the length is in the range 0 - 14 (inclusive).</p></div>
+<div class="paragraph"><p>The following element-types are used (note that these are <em>different</em> from the field-types):</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<span class="monospaced">bool</span>, encoded as <span class="monospaced">2</span>
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">byte</span>, encoded as <span class="monospaced">3</span>
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">double</span>, encoded as <span class="monospaced">4</span>
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">i16</span>, encoded as <span class="monospaced">6</span>
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">i32</span>, encoded as <span class="monospaced">8</span>
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">i64</span>, encoded as <span class="monospaced">10</span>
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">string</span>, used for binary and string fields, encoded as <span class="monospaced">11</span>
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">struct</span>, used for structs and union fields, encoded as <span class="monospaced">12</span>
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">map</span>, encoded as <span class="monospaced">13</span>
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">set</span>, encoded as <span class="monospaced">14</span>
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">list</span>, encoded as <span class="monospaced">15</span>
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>The maximum list/set size is configurable. By default there is no limit (meaning the limit is the maximum int32 value:
+2147483647).</p></div>
+</div>
+<div class="sect2">
+<h3 id="_map_2">Map</h3>
+<div class="paragraph"><p>Maps are encoded with a header indicating the size, the type of the keys and the element-type of the elements, followed
+by the encoded elements. The encoding follows this BNF:</p></div>
+<div class="literalblock">
+<div class="content monospaced">
+<pre>map           ::= empty-map | non-empty-map
+empty-map     ::= `0`
+non-empty-map ::= size key-element-type value-element-type (key value)+</pre>
+</div></div>
+<div class="literalblock">
+<div class="content monospaced">
+<pre>Compact protocol map header (1 byte, empty map):
++--------+
+|00000000|
++--------+
+
+Compact protocol map header (2+ bytes, non empty map) and key value pairs:
++--------+...+--------+--------+--------+...+--------+
+| size                |kkkkvvvv| key value pairs     |
++--------+...+--------+--------+--------+...+--------+</pre>
+</div></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<span class="monospaced">size</span> is the size, a var int (int32), strictly positive values (size &gt; 0)
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">kkkk</span> is the key element-type, a 4 bit unsigned int
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">vvvv</span> is the value element-type, a 4 bit unsigned int
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">key value pairs</span> are the encoded keys and values
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>The element-types are the same as for lists. The full list is included in the <em>List and set</em> section.</p></div>
+<div class="paragraph"><p>The maximum map size is configurable. By default there is no limit (meaning the limit is the maximum int32 value:
+2147483647).</p></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_protocol_considerations">Protocol considerations</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_comparing_binary_and_compact_protocol">Comparing binary and compact protocol</h3>
+<div class="paragraph"><p>The binary protocol is fairly simple and therefore easy to process. The compact protocol needs less bytes to send the
+same data at the cost of additional processing. When bandwidth is a bottleneck, the compact protocol will be slightly faster.
+When bandwidth is not a concern there is no advantage.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_compatibility">Compatibility</h3>
+<div class="paragraph"><p>A server could automatically determine whether a client talks the binary protocol or the compact protocol by
+investigating the first byte. If the value is <span class="monospaced">1000 0001</span> or <span class="monospaced">0000 0000</span> (assuming a name shorter then ±16 MB) it is the
+binary protocol. When the value is <span class="monospaced">1000 0010</span> it is talking the compact protocol.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_framed_vs_unframed_transport">Framed vs. unframed transport</h3>
+<div class="paragraph"><p>The first thrift binary wire format was unframed. This means that information is sent out in a single stream of bytes.
+With unframed transport the (generated) processors will read directly from the socket (though Apache Thrift does try to
+grab all available bytes from the socket in a buffer when it can).</p></div>
+<div class="paragraph"><p>Later, Thrift introduced the framed transport.</p></div>
+<div class="paragraph"><p>With framed transport the full request and response (the message and the following struct) are first written to a
+buffer. Then when the struct is complete (transport method <span class="monospaced">flush</span> is hijacked for this), the length of the buffer is
+written to the socket first, followed by the buffered bytes. The combination is called a <em>frame</em>. On the receiver side
+the complete frame is first read in a buffer before the message is passed to a processor.</p></div>
+<div class="paragraph"><p>The length prefix is a 4 byte signed int, send in network (big endian) order.
+The following must be true: <span class="monospaced">0</span> &#8656; length &#8656; <span class="monospaced">16384000</span> (16M).</p></div>
+<div class="paragraph"><p>Framed transport was introduced to ease the implementation of async processors. An async processor is only invoked when
+all data is received. Unfortunately, framed transport is not ideal for large messages as the entire frame stays in
+memory until the message has been processed. In addition, the java implementation merges the incoming data to a single,
+growing byte array. Every time the byte array is full it needs to be copied to a new larger byte array.</p></div>
+<div class="paragraph"><p>Framed and unframed transports are not compatible with each other.</p></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_bnf_notation_used_in_this_document">BNF notation used in this document</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>The following BNF notation is used:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+a plus <span class="monospaced">+</span> appended to an item represents repetition; the item is repeated 1 or more times
+</p>
+</li>
+<li>
+<p>
+a star <span class="monospaced">*</span> appended to an item represents optional repetition; the item is repeated 0 or more times
+</p>
+</li>
+<li>
+<p>
+a pipe <span class="monospaced">|</span> between items represents choice, the first matching item is selected
+</p>
+</li>
+<li>
+<p>
+parenthesis <span class="monospaced">(</span> and <span class="monospaced">)</span> are used for grouping multiple items
+</p>
+</li>
+</ul></div>
+</div>
+</div>
+</div>
+<div id="footnotes"><hr></div>
+<div id="footer">
+<div id="footer-text">
+Version 1.0<br>
+Last updated 2016-10-04 09:52:51 CEST
+</div>
+</div>
+</body>
+</html>

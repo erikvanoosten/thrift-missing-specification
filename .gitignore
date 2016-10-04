@@ -4,7 +4,7 @@ diag*.png
 .asciidoctor
 
 # The generated files and intermediaries:
-index.html
-thrift-rpc-missing-specification.pdf
-rpc-spec.xml
-rpc-spec.fo
+/rpc-spec.html
+/rpc-spec.xml
+/rpc-spec.fo
+/rpc-spec.pdf
