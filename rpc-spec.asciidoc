@@ -25,7 +25,7 @@ Other implementation however, should behave the same.
 
 Copyright (C) 2016 Erik van Oosten
 
-image:https://i.creativecommons.org/l/by-sa/4.0/80x15.png[rel=license,link="http://creativecommons.org/licenses/by-sa/4.0/"]
+image:cc-by-sa-80x15.png[Creative Commons License,rel=license,link="http://creativecommons.org/licenses/by-sa/4.0/"]
 This work is licensed under the http://creativecommons.org/licenses/by-sa/4.0/[Creative Commons Attribution-ShareAlike 4.0 International License].
 
 Feedback and contributions to this specifications are very welcome. You can find the
