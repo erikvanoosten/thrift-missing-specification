@@ -28,6 +28,7 @@ pdf:
 		-a pygments \
 		-a iconsdir=$(iconsdir) \
 		-a pygments \
+		-o thrift-rpc-missing-specification.pdf \
 		--no-xmllint \
 		rpc-spec.asciidoc
 

@@ -5,6 +5,6 @@ diag*.png
 
 # The generated files and intermediaries:
 index.html
-rpc-specification.html
-rpc-specification.pdf
-rpc-specification.xml
+thrift-rpc-missing-specification.pdf
+rpc-spec.xml
+rpc-spec.fo
