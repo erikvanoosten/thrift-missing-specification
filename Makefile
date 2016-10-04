@@ -22,7 +22,8 @@ default:
 		-a pygments \
 		-a iconsdir=$(iconsdir) \
 		rpc-spec.asciidoc && \
-	mv -f rpc-spec.html docs/index.html
+	mv -f rpc-spec.html docs/index.html && \
+	git add docs/index.html
 
 pdf:
 	a2x --fop \
@@ -35,7 +36,8 @@ pdf:
 		-a pygments \
 		--no-xmllint \
 		rpc-spec.asciidoc && \
-	mv -f rpc-spec.pdf docs/thrift-rpc-missing-specification.pdf \
+	mv -f rpc-spec.pdf docs/thrift-rpc-missing-specification.pdf && \
+	git add docs/thrift-rpc-missing-specification.pdf
 
 
 all: default pdf

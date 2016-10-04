@@ -898,19 +898,16 @@ asciidoc.install(2);
 <meta name="description" content="The missing specification for Thrift RPC"/>
 <meta name="keywords" content="thrift,facebook,rpc,documentation,specification,binary protocol,compact protocol"/>
 
-<!--<script type="text/javascript">-->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
-  <!--var _gaq = _gaq || [];-->
-  <!--_gaq.push(['_setAccount', 'UA-21971077-1']);-->
-  <!--_gaq.push(['_trackPageview']);-->
+  ga('create', 'UA-429873-8', 'auto');
+  ga('send', 'pageview');
 
-  <!--(function() {-->
-    <!--var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;-->
-    <!--ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';-->
-    <!--var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);-->
-  <!--})();-->
-
-<!--</script>-->
+</script>
 </head>
 <body class="article">
 <div id="header">
@@ -962,6 +959,8 @@ This work is licensed under the <a href="http://creativecommons.org/licenses/by-
 <div class="paragraph"><p>Feedback and contributions to this specifications are very welcome. You can find the
 <a href="https://github.com/erikvanoosten/thrift-missing-specification">source code</a>
 on GitHub.</p></div>
+<div class="paragraph"><p>There is also a <a href="http://erikvanoosten.github.io/thrift-missing-specification/thrift-rpc-missing-specification.pdf">PDF</a>
+version of this document.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -1204,7 +1203,7 @@ noticeable performance boost because contemporary CPUs use little endian when st
 <div class="content monospaced">
 <pre>Binary protocol, binary data, 4+ bytes:
 +--------+--------+--------+--------+--------+...+--------+
-| byte length                       | bytes                |
+| byte length                       | bytes               |
 +--------+--------+--------+--------+--------+...+--------+</pre>
 </div></div>
 <div class="paragraph"><p>Where:</p></div>
@@ -1959,7 +1958,7 @@ parenthesis <span class="monospaced">(</span> and <span class="monospaced">)</sp
 <div id="footer">
 <div id="footer-text">
 Version 1.0<br>
-Last updated 2016-10-04 09:52:51 CEST
+Last updated 2016-10-04 12:59:07 CEST
 </div>
 </div>
 </body>
