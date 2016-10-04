@@ -1,7 +1,11 @@
 #
 # Install asciidoc with:
 #  brew install asciidoc
+#
+# For PDF generation install:
 #  brew install fop
+#
+# For code formatting also install:
 #  sudo easy_install Pygments
 #
 
