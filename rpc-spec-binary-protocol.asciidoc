@@ -19,7 +19,7 @@ Binary is sent as follows:
 ....
 Binary protocol, binary data, 4+ bytes:
 +--------+--------+--------+--------+--------+...+--------+
-| byte length                       | bytes                |
+| byte length                       | bytes               |
 +--------+--------+--------+--------+--------+...+--------+
 ....
 
