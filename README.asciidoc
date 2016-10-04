@@ -7,5 +7,8 @@ documentation. The specification can be found at:
 
 http://erikvanoosten.github.io/thrift-missing-specification
 
+A http://erikvanoosten.github.io/thrift-missing-specification/thrift-rpc-missing-specification.pdf[PDF]
+is also available.
+
 Layout and publishing setup is heavily inspired by Diwaker Gupta's
 http://diwakergupta.github.io/thrift-missing-guide[missing Thrift guide].

@@ -32,6 +32,9 @@ Feedback and contributions to this specifications are very welcome. You can find
 https://github.com/erikvanoosten/thrift-missing-specification[source code]
 on GitHub.
 
+There is also a http://erikvanoosten.github.io/thrift-missing-specification/thrift-rpc-missing-specification.pdf[PDF]
+version of this document.
+
 == Thrift Remote Procedure Call Message exchange
 
 Both the binary protocol and the compact protocol assume a transport layer that exposes a bi-directional byte stream,
