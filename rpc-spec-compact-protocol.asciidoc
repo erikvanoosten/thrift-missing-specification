@@ -1,0 +1,223 @@
+== Thrift compact protocol encoding
+
+=== Integer encoding
+
+The _compact protocol_ uses multiple encodings for ints: the _zigzag int_, and the _var int_.
+
+Values of type `int32` and `int64` are first transformed to a *zigzag int*. A zigzag int folds positive and negative
+numbers into the positive number space. When we read 0, 1, 2, 3, 4 or 5 from the wire, this is translated to 0, -1, 1,
+-2 or 2 respectively. Here are the (Scala) formulas to convert from int32/int64 to a zigzag int and back:
+
+[source,scala]
+----
+def int32ToZigZag(n: Int): Int = (n << 1) ^ (n >> 31)
+def zigzagToInt32(n: Int): Int = (n >>> 1) ^ - (n & 1)
+def int64ToZigZag(n: Long): Long = (n << 1) ^ (n >> 63)
+def zigzagToint64(n: Long): Long = (n >>> 1) ^ - (n & 1)
+----
+
+The zigzag int is then encoded as a *var int*. Var ints take 1 to 5 bytes (int32) or 1 to 10 bytes (int64). The most
+significant bit of each byte indicates if more bytes follow. The concatenation of the least significant 7 bits from each
+byte form the number, where the first byte has the most significant bits (so they are in big endian or network order).
+
+Var ints are sometimes used directly inside the compact protocol to represent numbers that are usually positive.
+
+To encode an `int16` as zigzag int, it is first converted to an `int32` and then encoded as such. The type `int8` simply
+uses a single byte as in the binary protocol.
+
+=== Enum encoding
+
+The generated code encodes enums by taking the ordinal value and then encoding that just like an int32.
+
+=== Binary encoding
+
+Binary is sent as follows:
+
+....
+Binary protocol, binary data, 1+ bytes:
++--------+...+--------+--------+...+--------+
+| byte length         | bytes               |
++--------+...+--------+--------+...+--------+
+....
+
+Where:
+
+* `byte length` is the length of the byte array, using var int encoding (must be >= 0).
+* `bytes` are the bytes of the byte array.
+
+Be default the length is limited to 2147483647, however some implementation have the option to lower the limit.
+
+=== String encoding
+
+Strings are first encoded to UTF-8, and then send as binary.
+
+=== Double encoding
+
+Values of type `double` are first converted to an int64 according to the IEEE 754 floating-point "double format" bit
+layout. Most run-times provide primitives for the conversion. The int64 is encoded using 8 bytes in big endian order.
+
+This is some scala code showing the JVM primitives to convert from double to int64 and back:
+
+[source,scala]
+----
+def doubleToInt64(d: Double): Long = java.lang.Double.doubleToLongBits(d)
+def int64ToDouble(l: Long): Double = java.lang.Double.longBitsToDouble(l)
+----
+
+=== Boolean encoding
+
+Booleans are encoded differently depending on whether it is a field value (in a struct) or an element value (in a set,
+list or map). Field values are encoded directly in the field header. Element values of type bool are sent as an int8;
+true as `1` and false as `0`.
+
+=== Message encoding
+
+A `Message` on the wire looks as follows:
+
+....
+Compact protocol Message (4+ bytes):
++--------+--------+--------+...+--------+--------+...+--------+--------+...+--------+
+|pppppppp|mmmvvvvv| seq id              | name length         | name                |
++--------+--------+--------+...+--------+--------+...+--------+--------+...+--------+
+....
+
+Where:
+
+* `pppppppp` is the protocol id, fixed to `1000 0010` or `0x82`.
+* `mmm` is the message type, an unsigned 3 bit integer.
+* `vvvvv` is the version, an unsigned 5 bit integer, fixed to `00001`.
+* `seq id` is the sequence id, a signed 32 bit integer encoded as a var int.
+* `name length` is the byte length of the name field, a signed 32 bit integer encoded as a var int (must be >= 0).
+* `name` is the method name to invoke, a UTF-8 encoded string.
+
+Message types are encoded with the following values:
+
+* _Call_: 1
+* _Reply_: 2
+* _Exception_: 3
+* _Oneway_: 4
+
+=== Struct encoding
+
+....
+Compact protocol field header (short form) and field value:
++--------+--------+...+--------+
+|ddddtttt| field value         |
++--------+--------+...+--------+
+
+Compact protocol field header (1 to 3 bytes, long form) and field value:
++--------+--------+...+--------+--------+...+--------+
+|0000tttt| field id            | field value         |
++--------+--------+...+--------+--------+...+--------+
+
+Compact protocol stop field:
++--------+
+|00000000|
++--------+
+....
+
+Where:
+
+* `dddd` is the field id delta, an unsigned 4 bits integer (strictly positive, e.g. > 0).
+* `tttt` is field-type id, an unsigned 4 bit integer.
+* `field id` the field id, a signed 16 bit integer encoded as zigzag int.
+* `field-value` the encoded field value.
+
+The field id delta can be computed by `current-field-id - previous-field-id`, or just `current-field-id` if this is the
+first of the struct. The short form _should_ be used when the field id delta is in the range 1 - 15 (inclusive).
+
+The following field-types/values can be encoded:
+
+* `bool` with value `true`, encoded as `1`
+* `bool` with value `false`, encoded as `2`
+* `byte`, encoded as `3`
+* `i16`, encoded as `4`
+* `i32`, encoded as `5`
+* `i64`, encoded as `6`
+* `double`, encoded as `7`
+* `binary`, used for binary and string fields, encoded as `8`
+* `list`, encoded as `9`
+* `set`, encoded as `10`
+* `map`, encoded as `11`
+* `struct`, used for both structs and union fields, encoded as `12`
+
+Note that because there are 2 specific field types for the boolean values, the encoding of a boolean field value has no
+length (0 bytes).
+
+=== List and Set
+
+List and sets are encoded the same: a header indicating the size and the element-type of the elements, followed by the
+encoded elements.
+
+....
+Compact protocol list header (1 byte, short form) and elements:
++--------+--------+...+--------+
+|sssstttt| elements            |
++--------+--------+...+--------+
+
+Compact protocol list header (2+ bytes, long form) and elements:
++--------+--------+...+--------+--------+...+--------+
+|1111tttt| size                | elements            |
++--------+--------+...+--------+--------+...+--------+
+....
+
+Where:
+
+* `ssss` is the size, 4 bit unsigned int, values `0` - `14`
+* `tttt` is the element-type, a 4 bit unsigned int
+* `size` is the size, a var int (int32), positive values `15` or higher
+* `elements` are the encoded elements
+
+The short form _should_ be used when the length is in the range 0 - 14 (inclusive).
+
+The following element-types are used (note that these are _different_ from the field-types):
+
+* `bool`, encoded as `2`
+* `byte`, encoded as `3`
+* `double`, encoded as `4`
+* `i16`, encoded as `6`
+* `i32`, encoded as `8`
+* `i64`, encoded as `10`
+* `string`, used for binary and string fields, encoded as `11`
+* `struct`, used for structs and union fields, encoded as `12`
+* `map`, encoded as `13`
+* `set`, encoded as `14`
+* `list`, encoded as `15`
+
+The maximum list/set size is configurable. By default there is no limit (meaning the limit is the maximum int32 value:
+2147483647).
+
+=== Map
+
+Maps are encoded with a header indicating the size, the type of the keys and the element-type of the elements, followed
+by the encoded elements. The encoding follows this BNF:
+
+....
+map           ::= empty-map | non-empty-map
+empty-map     ::= `0`
+non-empty-map ::= size key-element-type value-element-type (key value)+
+....
+
+....
+Compact protocol map header (1 byte, empty map):
++--------+
+|00000000|
++--------+
+
+Compact protocol map header (2+ bytes, non empty map) and key value pairs:
++--------+...+--------+--------+--------+...+--------+
+| size                |kkkkvvvv| key value pairs     |
++--------+...+--------+--------+--------+...+--------+
+....
+
+Where:
+
+* `size` is the size, a var int (int32), strictly positive values (size > 0)
+* `kkkk` is the key element-type, a 4 bit unsigned int
+* `vvvv` is the value element-type, a 4 bit unsigned int
+* `key value pairs` are the encoded keys and values
+
+The element-types are the same as for lists. The full list is included in the 'List and set' section.
+
+The maximum map size is configurable. By default there is no limit (meaning the limit is the maximum int32 value:
+2147483647).

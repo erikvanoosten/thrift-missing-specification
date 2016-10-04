@@ -1,0 +1,15 @@
+Thrift: The Missing Specification
+=================================
+Erik van Oosten <e.vanoosten@grons.nl>
+
+This project is an attempt to plug the gap in http://thrift.apache.org[Thrift]
+documentation. The guide can be found at:
+
+http://erikvanoosten.github.io/thrift-missing-specification
+
+A PDF version can be found at:
+
+http://erikvanoosten.github.io/thrift-missing-specification/rpc-spec.pdf
+
+Layout and publishing setup is heavily inspired by Diwaker Gupta's
+http://diwakergupta.github.io/thrift-missing-guide[missing Thrift guide].

@@ -1,0 +1,10 @@
+# Files created by Intellij and asciidoc plugin:
+.idea
+diag*.png
+.asciidoctor
+
+# The generated files and intermediaries:
+index.html
+rpc-specification.html
+rpc-specification.pdf
+rpc-specification.xml
