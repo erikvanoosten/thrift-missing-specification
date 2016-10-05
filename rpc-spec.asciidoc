@@ -1,6 +1,5 @@
 = Thrift specification - Remote Procedure Call
 Erik van Oosten <e.vanoosten@grons.nl>
-v1.0, 2016-09-27: Initial version
 v1.1, 2016-10-05: Corrected integer type names. Small changes to section headers.
 
 The missing specification.
