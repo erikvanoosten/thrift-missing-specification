@@ -916,6 +916,8 @@ asciidoc.install(2);
 <span id="email" class="monospaced">&lt;<a href="mailto:e.vanoosten@grons.nl">e.vanoosten@grons.nl</a>&gt;</span><br>
 <span id="revnumber">version 1.0,</span>
 <span id="revdate">2016-09-27</span>
+<br><span id="revremark">Initial version
+v1.1, 2016-10-05: Corrected integer type names. Small changes to section headers.</span>
 <div id="toc">
   <div id="toctitle">Table of Contents</div>
   <noscript><p><b>JavaScript must be enabled in your browser to display the table of contents.</b></p></noscript>
@@ -1011,12 +1013,12 @@ for an response), the standard Apache Thrift Java servers do support it.</p></di
 </li>
 <li>
 <p>
-<em>Sequence id</em>, a signed int32 integer.
+<em>Sequence id</em>, a signed i32 integer.
 </p>
 </li>
 </ul></div>
 <div class="paragraph"><p>The <strong>sequence id</strong> is a simple message id assigned by the client. The server will use the same sequence id in the
-message of the response. The client uses this number to detect out of order responses. Each client has an int32 field
+message of the response. The client uses this number to detect out of order responses. Each client has an i32 field
 which is increased for each message. The sequence id simply wraps around when it overflows.</p></div>
 <div class="paragraph"><p>The <strong>name</strong> indicates the service method name to invoke. The server copies the name in the response message.</p></div>
 <div class="paragraph"><p>When the <strong>multiplexed protocol</strong> is used, the name contains the service name, a colon (<span class="monospaced">:</span>) and the method name. The
@@ -1067,10 +1069,10 @@ An exception field, name and id are as defined in the <span class="monospaced">t
   2: i32 type
 }</pre>
 </div></div>
-<div class="paragraph"><p>The following exception types are defined in the java implementation (0.9.3):</p></div>
+<div class="paragraph"><p>The following exception ``type``s are defined in the java implementation (0.9.3):</p></div>
 <div class="dlist"><dl>
 <dt class="hdlist1">
-unknown (0)
+<span class="monospaced">0</span>, unknown
 </dt>
 <dd>
 <p>
@@ -1078,7 +1080,7 @@ used in case the type from the peer is unknown.
 </p>
 </dd>
 <dt class="hdlist1">
-unknown method (1)
+<span class="monospaced">1</span>, unknown method
 </dt>
 <dd>
 <p>
@@ -1086,7 +1088,7 @@ used in case the method requested by the client is unknown by the server.
 </p>
 </dd>
 <dt class="hdlist1">
-invalid message type (2)
+<span class="monospaced">2</span>, invalid message type
 </dt>
 <dd>
 <p>
@@ -1094,7 +1096,7 @@ no usage was found.
 </p>
 </dd>
 <dt class="hdlist1">
-wrong method name (3)
+<span class="monospaced">3</span>, wrong method name
 </dt>
 <dd>
 <p>
@@ -1102,7 +1104,7 @@ no usage was found.
 </p>
 </dd>
 <dt class="hdlist1">
-bad sequence id (4)
+<span class="monospaced">4</span>, bad sequence id
 </dt>
 <dd>
 <p>
@@ -1110,7 +1112,7 @@ used internally by the client to indicate a wrong sequence id in the response.
 </p>
 </dd>
 <dt class="hdlist1">
-missing result (5)
+<span class="monospaced">5</span>, missing result
 </dt>
 <dd>
 <p>
@@ -1118,7 +1120,7 @@ used internally by the client to indicate a response without any field (result n
 </p>
 </dd>
 <dt class="hdlist1">
-internal error (6)
+<span class="monospaced">6</span>, internal error
 </dt>
 <dd>
 <p>
@@ -1126,7 +1128,7 @@ used when the server throws an exception that is not declared in the Thrift IDL 
 </p>
 </dd>
 <dt class="hdlist1">
-protocol error (7)
+<span class="monospaced">7</span>, protocol error
 </dt>
 <dd>
 <p>
@@ -1134,7 +1136,7 @@ used when something goes wrong during decoding. For example when a list is too l
 </p>
 </dd>
 <dt class="hdlist1">
-invalid transform (8)
+<span class="monospaced">8</span>, invalid transform
 </dt>
 <dd>
 <p>
@@ -1142,7 +1144,7 @@ no usage was found.
 </p>
 </dd>
 <dt class="hdlist1">
-invalid protocol (9)
+<span class="monospaced">9</span>, invalid protocol
 </dt>
 <dd>
 <p>
@@ -1150,7 +1152,7 @@ no usage was found.
 </p>
 </dd>
 <dt class="hdlist1">
-unsupported client type (10)
+<span class="monospaced">10</span>, unsupported client type
 </dt>
 <dd>
 <p>
@@ -1188,13 +1190,13 @@ silent type cast.</p></div>
 <div class="sect2">
 <h3 id="_integer_encoding">Integer encoding</h3>
 <div class="paragraph"><p>In the <em>binary protocol</em> integers are encoded with the most significant byte first (big endian byte order, aka network
-order). An <span class="monospaced">int8</span> needs 1 byte, an <span class="monospaced">int16</span> 2, an <span class="monospaced">int32</span> 4 and an <span class="monospaced">int64</span> needs 8 bytes.</p></div>
+order). An <span class="monospaced">i8</span> needs 1 byte, an <span class="monospaced">i16</span> 2, an <span class="monospaced">i32</span> 4 and an <span class="monospaced">i64</span> needs 8 bytes.</p></div>
 <div class="paragraph"><p>The CPP version has the option to use the binary protocol with little endian order. Little endian gives a small but
 noticeable performance boost because contemporary CPUs use little endian when storing integers to RAM.</p></div>
 </div>
 <div class="sect2">
 <h3 id="_enum_encoding">Enum encoding</h3>
-<div class="paragraph"><p>The generated code encodes enums by taking the ordinal value and then encoding that as an int32.</p></div>
+<div class="paragraph"><p>The generated code encodes enums by taking the ordinal value and then encoding that as an i32.</p></div>
 </div>
 <div class="sect2">
 <h3 id="_binary_encoding">Binary encoding</h3>
@@ -1227,17 +1229,17 @@ noticeable performance boost because contemporary CPUs use little endian when st
 </div>
 <div class="sect2">
 <h3 id="_double_encoding">Double encoding</h3>
-<div class="paragraph"><p>Values of type <span class="monospaced">double</span> are first converted to an int64 according to the IEEE 754 floating-point "double format" bit
-layout. Most run-times provide primitives for the conversion. The int64 is encoded using 8 bytes in big endian order.</p></div>
-<div class="paragraph"><p>This is some scala code showing the JVM primitives to convert from double to int64 and back:</p></div>
+<div class="paragraph"><p>Values of type <span class="monospaced">double</span> are first converted to an i64 according to the IEEE 754 floating-point "double format" bit
+layout. Most run-times provide primitives for the conversion. The i64 is encoded using 8 bytes in big endian order.</p></div>
+<div class="paragraph"><p>This is some scala code showing the JVM primitives to convert from double to i64 and back:</p></div>
 <div class="listingblock">
-<div class="content"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="n">doubleToInt64</span><span class="o">(</span><span class="n">d</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Long</span> <span class="o">=</span> <span class="n">java</span><span class="o">.</span><span class="n">lang</span><span class="o">.</span><span class="nc">Double</span><span class="o">.</span><span class="n">doubleToLongBits</span><span class="o">(</span><span class="n">d</span><span class="o">)</span>
-<span class="k">def</span> <span class="n">int64ToDouble</span><span class="o">(</span><span class="n">l</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="n">java</span><span class="o">.</span><span class="n">lang</span><span class="o">.</span><span class="nc">Double</span><span class="o">.</span><span class="n">longBitsToDouble</span><span class="o">(</span><span class="n">l</span><span class="o">)</span>
+<div class="content"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="n">doubleToI64</span><span class="o">(</span><span class="n">d</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Long</span> <span class="o">=</span> <span class="n">java</span><span class="o">.</span><span class="n">lang</span><span class="o">.</span><span class="nc">Double</span><span class="o">.</span><span class="n">doubleToLongBits</span><span class="o">(</span><span class="n">d</span><span class="o">)</span>
+<span class="k">def</span> <span class="n">i64ToDouble</span><span class="o">(</span><span class="n">l</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="n">java</span><span class="o">.</span><span class="n">lang</span><span class="o">.</span><span class="nc">Double</span><span class="o">.</span><span class="n">longBitsToDouble</span><span class="o">(</span><span class="n">l</span><span class="o">)</span>
 </pre></div></div></div>
 </div>
 <div class="sect2">
 <h3 id="_boolean_encoding">Boolean encoding</h3>
-<div class="paragraph"><p>Values of <span class="monospaced">bool</span> type are first converted to an int8. True is converted to <span class="monospaced">1</span>, false to <span class="monospaced">0</span>.</p></div>
+<div class="paragraph"><p>Values of <span class="monospaced">bool</span> type are first converted to an i8. True is converted to <span class="monospaced">1</span>, false to <span class="monospaced">0</span>.</p></div>
 </div>
 <div class="sect2">
 <h3 id="_message_encoding">Message encoding</h3>
@@ -1428,12 +1430,12 @@ encoded elements.</p></div>
 <div class="ulist"><ul>
 <li>
 <p>
-<span class="monospaced">tttttttt</span> is the element-type, encoded as an int8
+<span class="monospaced">tttttttt</span> is the element-type, encoded as an i8
 </p>
 </li>
 <li>
 <p>
-<span class="monospaced">size</span> is the size, encoded as an int32, positive values only
+<span class="monospaced">size</span> is the size, encoded as an i32, positive values only
 </p>
 </li>
 <li>
@@ -1443,7 +1445,7 @@ encoded elements.</p></div>
 </li>
 </ul></div>
 <div class="paragraph"><p>The element-type values are the same as field-types. The full list is included in the struct section above.</p></div>
-<div class="paragraph"><p>The maximum list/set size is configurable. By default there is no limit (meaning the limit is the maximum int32 value:
+<div class="paragraph"><p>The maximum list/set size is configurable. By default there is no limit (meaning the limit is the maximum i32 value:
 2147483647).</p></div>
 </div>
 <div class="sect2">
@@ -1465,17 +1467,17 @@ followed by the encoded elements. The encoding follows this BNF:</p></div>
 <div class="ulist"><ul>
 <li>
 <p>
-<span class="monospaced">kkkkkkkk</span> is the key element-type, encoded as an int8
+<span class="monospaced">kkkkkkkk</span> is the key element-type, encoded as an i8
 </p>
 </li>
 <li>
 <p>
-<span class="monospaced">vvvvvvvv</span> is the value element-type, encoded as an int8
+<span class="monospaced">vvvvvvvv</span> is the value element-type, encoded as an i8
 </p>
 </li>
 <li>
 <p>
-<span class="monospaced">size</span> is the size of the map, encoded as an int32, positive values only
+<span class="monospaced">size</span> is the size of the map, encoded as an i32, positive values only
 </p>
 </li>
 <li>
@@ -1485,7 +1487,7 @@ followed by the encoded elements. The encoding follows this BNF:</p></div>
 </li>
 </ul></div>
 <div class="paragraph"><p>The element-type values are the same as field-types. The full list is included in the struct section above.</p></div>
-<div class="paragraph"><p>The maximum map size is configurable. By default there is no limit (meaning the limit is the maximum int32 value:
+<div class="paragraph"><p>The maximum map size is configurable. By default there is no limit (meaning the limit is the maximum i32 value:
 2147483647).</p></div>
 </div>
 </div>
@@ -1495,26 +1497,26 @@ followed by the encoded elements. The encoding follows this BNF:</p></div>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_integer_encoding_2">Integer encoding</h3>
-<div class="paragraph"><p>The <em>compact protocol</em> uses multiple encodings for ints: the <em>zigzag int</em>, and the <em>var int</em>.</p></div>
-<div class="paragraph"><p>Values of type <span class="monospaced">int32</span> and <span class="monospaced">int64</span> are first transformed to a <strong>zigzag int</strong>. A zigzag int folds positive and negative
+<div class="paragraph"><p>The <em>compact protocol</em> uses multiple encodings for integers: the <em>zigzag int</em>, and the <em>var int</em>.</p></div>
+<div class="paragraph"><p>Values of type <span class="monospaced">i32</span> and <span class="monospaced">i64</span> are first transformed to a <strong>zigzag int</strong>. A zigzag int folds positive and negative
 numbers into the positive number space. When we read 0, 1, 2, 3, 4 or 5 from the wire, this is translated to 0, -1, 1,
--2 or 2 respectively. Here are the (Scala) formulas to convert from int32/int64 to a zigzag int and back:</p></div>
+-2 or 2 respectively. Here are the (Scala) formulas to convert from i32/i64 to a zigzag int and back:</p></div>
 <div class="listingblock">
-<div class="content"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="n">int32ToZigZag</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="o">(</span><span class="n">n</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span><span class="o">)</span> <span class="o">^</span> <span class="o">(</span><span class="n">n</span> <span class="o">&gt;&gt;</span> <span class="mi">31</span><span class="o">)</span>
+<div class="content"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="n">i32ToZigZag</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="o">(</span><span class="n">n</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span><span class="o">)</span> <span class="o">^</span> <span class="o">(</span><span class="n">n</span> <span class="o">&gt;&gt;</span> <span class="mi">31</span><span class="o">)</span>
 <span class="k">def</span> <span class="n">zigzagToInt32</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="o">(</span><span class="n">n</span> <span class="o">&gt;&gt;&gt;</span> <span class="mi">1</span><span class="o">)</span> <span class="o">^</span> <span class="o">-</span> <span class="o">(</span><span class="n">n</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="o">)</span>
-<span class="k">def</span> <span class="n">int64ToZigZag</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">Long</span> <span class="o">=</span> <span class="o">(</span><span class="n">n</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span><span class="o">)</span> <span class="o">^</span> <span class="o">(</span><span class="n">n</span> <span class="o">&gt;&gt;</span> <span class="mi">63</span><span class="o">)</span>
-<span class="k">def</span> <span class="n">zigzagToint64</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">Long</span> <span class="o">=</span> <span class="o">(</span><span class="n">n</span> <span class="o">&gt;&gt;&gt;</span> <span class="mi">1</span><span class="o">)</span> <span class="o">^</span> <span class="o">-</span> <span class="o">(</span><span class="n">n</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="o">)</span>
+<span class="k">def</span> <span class="n">i64ToZigZag</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">Long</span> <span class="o">=</span> <span class="o">(</span><span class="n">n</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span><span class="o">)</span> <span class="o">^</span> <span class="o">(</span><span class="n">n</span> <span class="o">&gt;&gt;</span> <span class="mi">63</span><span class="o">)</span>
+<span class="k">def</span> <span class="n">zigzagToI64</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">Long</span> <span class="o">=</span> <span class="o">(</span><span class="n">n</span> <span class="o">&gt;&gt;&gt;</span> <span class="mi">1</span><span class="o">)</span> <span class="o">^</span> <span class="o">-</span> <span class="o">(</span><span class="n">n</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="o">)</span>
 </pre></div></div></div>
-<div class="paragraph"><p>The zigzag int is then encoded as a <strong>var int</strong>. Var ints take 1 to 5 bytes (int32) or 1 to 10 bytes (int64). The most
+<div class="paragraph"><p>The zigzag int is then encoded as a <strong>var int</strong>. Var ints take 1 to 5 bytes (i32) or 1 to 10 bytes (i64). The most
 significant bit of each byte indicates if more bytes follow. The concatenation of the least significant 7 bits from each
 byte form the number, where the first byte has the most significant bits (so they are in big endian or network order).</p></div>
 <div class="paragraph"><p>Var ints are sometimes used directly inside the compact protocol to represent numbers that are usually positive.</p></div>
-<div class="paragraph"><p>To encode an <span class="monospaced">int16</span> as zigzag int, it is first converted to an <span class="monospaced">int32</span> and then encoded as such. The type <span class="monospaced">int8</span> simply
+<div class="paragraph"><p>To encode an <span class="monospaced">i16</span> as zigzag int, it is first converted to an <span class="monospaced">i32</span> and then encoded as such. The type <span class="monospaced">i8</span> simply
 uses a single byte as in the binary protocol.</p></div>
 </div>
 <div class="sect2">
 <h3 id="_enum_encoding_2">Enum encoding</h3>
-<div class="paragraph"><p>The generated code encodes enums by taking the ordinal value and then encoding that just like an int32.</p></div>
+<div class="paragraph"><p>The generated code encodes enums by taking the ordinal value and then encoding that just like an i32.</p></div>
 </div>
 <div class="sect2">
 <h3 id="_binary_encoding_2">Binary encoding</h3>
@@ -1547,18 +1549,18 @@ uses a single byte as in the binary protocol.</p></div>
 </div>
 <div class="sect2">
 <h3 id="_double_encoding_2">Double encoding</h3>
-<div class="paragraph"><p>Values of type <span class="monospaced">double</span> are first converted to an int64 according to the IEEE 754 floating-point "double format" bit
-layout. Most run-times provide primitives for the conversion. The int64 is encoded using 8 bytes in big endian order.</p></div>
-<div class="paragraph"><p>This is some scala code showing the JVM primitives to convert from double to int64 and back:</p></div>
+<div class="paragraph"><p>Values of type <span class="monospaced">double</span> are first converted to an i64 according to the IEEE 754 floating-point "double format" bit
+layout. Most run-times provide primitives for the conversion. The i64 is encoded using 8 bytes in big endian order.</p></div>
+<div class="paragraph"><p>This is some scala code showing the JVM primitives to convert from double to i64 and back:</p></div>
 <div class="listingblock">
-<div class="content"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="n">doubleToInt64</span><span class="o">(</span><span class="n">d</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Long</span> <span class="o">=</span> <span class="n">java</span><span class="o">.</span><span class="n">lang</span><span class="o">.</span><span class="nc">Double</span><span class="o">.</span><span class="n">doubleToLongBits</span><span class="o">(</span><span class="n">d</span><span class="o">)</span>
-<span class="k">def</span> <span class="n">int64ToDouble</span><span class="o">(</span><span class="n">l</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="n">java</span><span class="o">.</span><span class="n">lang</span><span class="o">.</span><span class="nc">Double</span><span class="o">.</span><span class="n">longBitsToDouble</span><span class="o">(</span><span class="n">l</span><span class="o">)</span>
+<div class="content"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="n">doubleToI64</span><span class="o">(</span><span class="n">d</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Long</span> <span class="o">=</span> <span class="n">java</span><span class="o">.</span><span class="n">lang</span><span class="o">.</span><span class="nc">Double</span><span class="o">.</span><span class="n">doubleToLongBits</span><span class="o">(</span><span class="n">d</span><span class="o">)</span>
+<span class="k">def</span> <span class="n">i64ToDouble</span><span class="o">(</span><span class="n">l</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="n">java</span><span class="o">.</span><span class="n">lang</span><span class="o">.</span><span class="nc">Double</span><span class="o">.</span><span class="n">longBitsToDouble</span><span class="o">(</span><span class="n">l</span><span class="o">)</span>
 </pre></div></div></div>
 </div>
 <div class="sect2">
 <h3 id="_boolean_encoding_2">Boolean encoding</h3>
 <div class="paragraph"><p>Booleans are encoded differently depending on whether it is a field value (in a struct) or an element value (in a set,
-list or map). Field values are encoded directly in the field header. Element values of type bool are sent as an int8;
+list or map). Field values are encoded directly in the field header. Element values of type bool are sent as an i8;
 true as <span class="monospaced">1</span> and false as <span class="monospaced">0</span>.</p></div>
 </div>
 <div class="sect2">
@@ -1758,17 +1760,17 @@ Compact protocol list header (2+ bytes, long form) and elements:
 <div class="ulist"><ul>
 <li>
 <p>
-<span class="monospaced">ssss</span> is the size, 4 bit unsigned int, values <span class="monospaced">0</span> - <span class="monospaced">14</span>
+<span class="monospaced">ssss</span> is the size, 4 bit unsigned integer, values <span class="monospaced">0</span> - <span class="monospaced">14</span>
 </p>
 </li>
 <li>
 <p>
-<span class="monospaced">tttt</span> is the element-type, a 4 bit unsigned int
+<span class="monospaced">tttt</span> is the element-type, a 4 bit unsigned integer
 </p>
 </li>
 <li>
 <p>
-<span class="monospaced">size</span> is the size, a var int (int32), positive values <span class="monospaced">15</span> or higher
+<span class="monospaced">size</span> is the size, a var int (i32), positive values <span class="monospaced">15</span> or higher
 </p>
 </li>
 <li>
@@ -1836,7 +1838,7 @@ Compact protocol list header (2+ bytes, long form) and elements:
 </p>
 </li>
 </ul></div>
-<div class="paragraph"><p>The maximum list/set size is configurable. By default there is no limit (meaning the limit is the maximum int32 value:
+<div class="paragraph"><p>The maximum list/set size is configurable. By default there is no limit (meaning the limit is the maximum i32 value:
 2147483647).</p></div>
 </div>
 <div class="sect2">
@@ -1865,17 +1867,17 @@ Compact protocol map header (2+ bytes, non empty map) and key value pairs:
 <div class="ulist"><ul>
 <li>
 <p>
-<span class="monospaced">size</span> is the size, a var int (int32), strictly positive values (size &gt; 0)
+<span class="monospaced">size</span> is the size, a var int (i32), strictly positive values (size &gt; 0)
 </p>
 </li>
 <li>
 <p>
-<span class="monospaced">kkkk</span> is the key element-type, a 4 bit unsigned int
+<span class="monospaced">kkkk</span> is the key element-type, a 4 bit unsigned integer
 </p>
 </li>
 <li>
 <p>
-<span class="monospaced">vvvv</span> is the value element-type, a 4 bit unsigned int
+<span class="monospaced">vvvv</span> is the value element-type, a 4 bit unsigned integer
 </p>
 </li>
 <li>
@@ -1885,28 +1887,25 @@ Compact protocol map header (2+ bytes, non empty map) and key value pairs:
 </li>
 </ul></div>
 <div class="paragraph"><p>The element-types are the same as for lists. The full list is included in the <em>List and set</em> section.</p></div>
-<div class="paragraph"><p>The maximum map size is configurable. By default there is no limit (meaning the limit is the maximum int32 value:
+<div class="paragraph"><p>The maximum map size is configurable. By default there is no limit (meaning the limit is the maximum i32 value:
 2147483647).</p></div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_protocol_considerations">Protocol considerations</h2>
+<h2 id="_comparing_binary_and_compact_protocol">Comparing binary and compact protocol</h2>
 <div class="sectionbody">
-<div class="sect2">
-<h3 id="_comparing_binary_and_compact_protocol">Comparing binary and compact protocol</h3>
 <div class="paragraph"><p>The binary protocol is fairly simple and therefore easy to process. The compact protocol needs less bytes to send the
 same data at the cost of additional processing. When bandwidth is a bottleneck, the compact protocol will be slightly faster.
 When bandwidth is not a concern there is no advantage.</p></div>
-</div>
-<div class="sect2">
-<h3 id="_compatibility">Compatibility</h3>
-<div class="paragraph"><p>A server could automatically determine whether a client talks the binary protocol or the compact protocol by
+<div class="paragraph"><div class="title">Compatibility</div><p>A server could automatically determine whether a client talks the binary protocol or the compact protocol by
 investigating the first byte. If the value is <span class="monospaced">1000 0001</span> or <span class="monospaced">0000 0000</span> (assuming a name shorter then ±16 MB) it is the
 binary protocol. When the value is <span class="monospaced">1000 0010</span> it is talking the compact protocol.</p></div>
 </div>
-<div class="sect2">
-<h3 id="_framed_vs_unframed_transport">Framed vs. unframed transport</h3>
+</div>
+<div class="sect1">
+<h2 id="_framed_vs_unframed_transport">Framed vs. unframed transport</h2>
+<div class="sectionbody">
 <div class="paragraph"><p>The first thrift binary wire format was unframed. This means that information is sent out in a single stream of bytes.
 With unframed transport the (generated) processors will read directly from the socket (though Apache Thrift does try to
 grab all available bytes from the socket in a buffer when it can).</p></div>
@@ -1915,14 +1914,13 @@ grab all available bytes from the socket in a buffer when it can).</p></div>
 buffer. Then when the struct is complete (transport method <span class="monospaced">flush</span> is hijacked for this), the length of the buffer is
 written to the socket first, followed by the buffered bytes. The combination is called a <em>frame</em>. On the receiver side
 the complete frame is first read in a buffer before the message is passed to a processor.</p></div>
-<div class="paragraph"><p>The length prefix is a 4 byte signed int, send in network (big endian) order.
+<div class="paragraph"><p>The length prefix is a 4 byte signed integer, send in network (big endian) order.
 The following must be true: <span class="monospaced">0</span> &#8656; length &#8656; <span class="monospaced">16384000</span> (16M).</p></div>
 <div class="paragraph"><p>Framed transport was introduced to ease the implementation of async processors. An async processor is only invoked when
 all data is received. Unfortunately, framed transport is not ideal for large messages as the entire frame stays in
 memory until the message has been processed. In addition, the java implementation merges the incoming data to a single,
 growing byte array. Every time the byte array is full it needs to be copied to a new larger byte array.</p></div>
 <div class="paragraph"><p>Framed and unframed transports are not compatible with each other.</p></div>
-</div>
 </div>
 </div>
 <div class="sect1">
@@ -1958,7 +1956,7 @@ parenthesis <span class="monospaced">(</span> and <span class="monospaced">)</sp
 <div id="footer">
 <div id="footer-text">
 Version 1.0<br>
-Last updated 2016-10-04 12:59:07 CEST
+Last updated 2016-10-05 10:01:44 CEST
 </div>
 </div>
 </body>
