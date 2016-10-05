@@ -58,10 +58,10 @@ A *message* contains:
 
 * _Name_, a string.
 * _Message type_, a message types, one of `Call`, `Reply`, `Exception` and `Oneway`.
-* _Sequence id_, a signed int32 integer.
+* _Sequence id_, a signed i32 integer.
 
 The *sequence id* is a simple message id assigned by the client. The server will use the same sequence id in the
-message of the response. The client uses this number to detect out of order responses. Each client has an int32 field
+message of the response. The client uses this number to detect out of order responses. Each client has an i32 field
 which is increased for each message. The sequence id simply wraps around when it overflows.
 
 The *name* indicates the service method name to invoke. The server copies the name in the response message.
@@ -113,19 +113,19 @@ exception TApplicationException {
 }
 ....
 
-The following exception types are defined in the java implementation (0.9.3):
+The following exception ``type``s are defined in the java implementation (0.9.3):
 
-unknown (0):: used in case the type from the peer is unknown.
-unknown method (1):: used in case the method requested by the client is unknown by the server.
-invalid message type (2):: no usage was found.
-wrong method name (3):: no usage was found.
-bad sequence id (4):: used internally by the client to indicate a wrong sequence id in the response.
-missing result (5):: used internally by the client to indicate a response without any field (result nor exception).
-internal error (6):: used when the server throws an exception that is not declared in the Thrift IDL file.
-protocol error (7):: used when something goes wrong during decoding. For example when a list is too long or a required field is missing.
-invalid transform (8):: no usage was found.
-invalid protocol (9):: no usage was found.
-unsupported client type (10):: no usage was found.
+`0`, unknown:: used in case the type from the peer is unknown.
+`1`, unknown method:: used in case the method requested by the client is unknown by the server.
+`2`, invalid message type:: no usage was found.
+`3`, wrong method name:: no usage was found.
+`4`, bad sequence id:: used internally by the client to indicate a wrong sequence id in the response.
+`5`, missing result:: used internally by the client to indicate a response without any field (result nor exception).
+`6`, internal error:: used when the server throws an exception that is not declared in the Thrift IDL file.
+`7`, protocol error:: used when something goes wrong during decoding. For example when a list is too long or a required field is missing.
+`8`, invalid transform:: no usage was found.
+`9`, invalid protocol:: no usage was found.
+`10`, unsupported client type:: no usage was found.
 
 ==== Struct
 

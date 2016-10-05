@@ -4,30 +4,30 @@
 
 The _compact protocol_ uses multiple encodings for ints: the _zigzag int_, and the _var int_.
 
-Values of type `int32` and `int64` are first transformed to a *zigzag int*. A zigzag int folds positive and negative
+Values of type `i32` and `i64` are first transformed to a *zigzag int*. A zigzag int folds positive and negative
 numbers into the positive number space. When we read 0, 1, 2, 3, 4 or 5 from the wire, this is translated to 0, -1, 1,
--2 or 2 respectively. Here are the (Scala) formulas to convert from int32/int64 to a zigzag int and back:
+-2 or 2 respectively. Here are the (Scala) formulas to convert from i32/i64 to a zigzag int and back:
 
 [source,scala]
 ----
-def int32ToZigZag(n: Int): Int = (n << 1) ^ (n >> 31)
+def i32ToZigZag(n: Int): Int = (n << 1) ^ (n >> 31)
 def zigzagToInt32(n: Int): Int = (n >>> 1) ^ - (n & 1)
-def int64ToZigZag(n: Long): Long = (n << 1) ^ (n >> 63)
-def zigzagToint64(n: Long): Long = (n >>> 1) ^ - (n & 1)
+def i64ToZigZag(n: Long): Long = (n << 1) ^ (n >> 63)
+def zigzagToI64(n: Long): Long = (n >>> 1) ^ - (n & 1)
 ----
 
-The zigzag int is then encoded as a *var int*. Var ints take 1 to 5 bytes (int32) or 1 to 10 bytes (int64). The most
+The zigzag int is then encoded as a *var int*. Var ints take 1 to 5 bytes (i32) or 1 to 10 bytes (i64). The most
 significant bit of each byte indicates if more bytes follow. The concatenation of the least significant 7 bits from each
 byte form the number, where the first byte has the most significant bits (so they are in big endian or network order).
 
 Var ints are sometimes used directly inside the compact protocol to represent numbers that are usually positive.
 
-To encode an `int16` as zigzag int, it is first converted to an `int32` and then encoded as such. The type `int8` simply
+To encode an `i16` as zigzag int, it is first converted to an `i32` and then encoded as such. The type `i8` simply
 uses a single byte as in the binary protocol.
 
 === Enum encoding
 
-The generated code encodes enums by taking the ordinal value and then encoding that just like an int32.
+The generated code encodes enums by taking the ordinal value and then encoding that just like an i32.
 
 === Binary encoding
 
@@ -53,21 +53,21 @@ Strings are first encoded to UTF-8, and then send as binary.
 
 === Double encoding
 
-Values of type `double` are first converted to an int64 according to the IEEE 754 floating-point "double format" bit
-layout. Most run-times provide primitives for the conversion. The int64 is encoded using 8 bytes in big endian order.
+Values of type `double` are first converted to an i64 according to the IEEE 754 floating-point "double format" bit
+layout. Most run-times provide primitives for the conversion. The i64 is encoded using 8 bytes in big endian order.
 
-This is some scala code showing the JVM primitives to convert from double to int64 and back:
+This is some scala code showing the JVM primitives to convert from double to i64 and back:
 
 [source,scala]
 ----
-def doubleToInt64(d: Double): Long = java.lang.Double.doubleToLongBits(d)
-def int64ToDouble(l: Long): Double = java.lang.Double.longBitsToDouble(l)
+def doubleToI64(d: Double): Long = java.lang.Double.doubleToLongBits(d)
+def i64ToDouble(l: Long): Double = java.lang.Double.longBitsToDouble(l)
 ----
 
 === Boolean encoding
 
 Booleans are encoded differently depending on whether it is a field value (in a struct) or an element value (in a set,
-list or map). Field values are encoded directly in the field header. Element values of type bool are sent as an int8;
+list or map). Field values are encoded directly in the field header. Element values of type bool are sent as an i8;
 true as `1` and false as `0`.
 
 === Message encoding
@@ -165,7 +165,7 @@ Where:
 
 * `ssss` is the size, 4 bit unsigned int, values `0` - `14`
 * `tttt` is the element-type, a 4 bit unsigned int
-* `size` is the size, a var int (int32), positive values `15` or higher
+* `size` is the size, a var int (i32), positive values `15` or higher
 * `elements` are the encoded elements
 
 The short form _should_ be used when the length is in the range 0 - 14 (inclusive).
@@ -184,7 +184,7 @@ The following element-types are used (note that these are _different_ from the f
 * `set`, encoded as `14`
 * `list`, encoded as `15`
 
-The maximum list/set size is configurable. By default there is no limit (meaning the limit is the maximum int32 value:
+The maximum list/set size is configurable. By default there is no limit (meaning the limit is the maximum i32 value:
 2147483647).
 
 === Map
@@ -212,12 +212,12 @@ Compact protocol map header (2+ bytes, non empty map) and key value pairs:
 
 Where:
 
-* `size` is the size, a var int (int32), strictly positive values (size > 0)
+* `size` is the size, a var int (i32), strictly positive values (size > 0)
 * `kkkk` is the key element-type, a 4 bit unsigned int
 * `vvvv` is the value element-type, a 4 bit unsigned int
 * `key value pairs` are the encoded keys and values
 
 The element-types are the same as for lists. The full list is included in the 'List and set' section.
 
-The maximum map size is configurable. By default there is no limit (meaning the limit is the maximum int32 value:
+The maximum map size is configurable. By default there is no limit (meaning the limit is the maximum i32 value:
 2147483647).

@@ -3,14 +3,14 @@
 === Integer encoding
 
 In the _binary protocol_ integers are encoded with the most significant byte first (big endian byte order, aka network
-order). An `int8` needs 1 byte, an `int16` 2, an `int32` 4 and an `int64` needs 8 bytes.
+order). An `i8` needs 1 byte, an `i16` 2, an `i32` 4 and an `i64` needs 8 bytes.
 
 The CPP version has the option to use the binary protocol with little endian order. Little endian gives a small but
 noticeable performance boost because contemporary CPUs use little endian when storing integers to RAM.
 
 === Enum encoding
 
-The generated code encodes enums by taking the ordinal value and then encoding that as an int32.
+The generated code encodes enums by taking the ordinal value and then encoding that as an i32.
 
 === Binary encoding
 
@@ -36,20 +36,20 @@ Strings are first encoded to UTF-8, and then send as binary.
 
 === Double encoding
 
-Values of type `double` are first converted to an int64 according to the IEEE 754 floating-point "double format" bit
-layout. Most run-times provide primitives for the conversion. The int64 is encoded using 8 bytes in big endian order.
+Values of type `double` are first converted to an i64 according to the IEEE 754 floating-point "double format" bit
+layout. Most run-times provide primitives for the conversion. The i64 is encoded using 8 bytes in big endian order.
 
-This is some scala code showing the JVM primitives to convert from double to int64 and back:
+This is some scala code showing the JVM primitives to convert from double to i64 and back:
 
 [source,scala]
 ----
-def doubleToInt64(d: Double): Long = java.lang.Double.doubleToLongBits(d)
-def int64ToDouble(l: Long): Double = java.lang.Double.longBitsToDouble(l)
+def doubleToI64(d: Double): Long = java.lang.Double.doubleToLongBits(d)
+def i64ToDouble(l: Long): Double = java.lang.Double.longBitsToDouble(l)
 ----
 
 === Boolean encoding
 
-Values of `bool` type are first converted to an int8. True is converted to `1`, false to `0`.
+Values of `bool` type are first converted to an i8. True is converted to `1`, false to `0`.
 
 === Message encoding
 
@@ -146,13 +146,13 @@ Binary protocol list (5+ bytes) and elements:
 
 Where:
 
-* `tttttttt` is the element-type, encoded as an int8
-* `size` is the size, encoded as an int32, positive values only
+* `tttttttt` is the element-type, encoded as an i8
+* `size` is the size, encoded as an i32, positive values only
 * `elements` the element values
 
 The element-type values are the same as field-types. The full list is included in the struct section above.
 
-The maximum list/set size is configurable. By default there is no limit (meaning the limit is the maximum int32 value:
+The maximum list/set size is configurable. By default there is no limit (meaning the limit is the maximum i32 value:
 2147483647).
 
 === Map
@@ -173,12 +173,12 @@ Binary protocol map (6+ bytes) and key value pairs:
 
 Where:
 
-* `kkkkkkkk` is the key element-type, encoded as an int8
-* `vvvvvvvv` is the value element-type, encoded as an int8
-* `size` is the size of the map, encoded as an int32, positive values only
+* `kkkkkkkk` is the key element-type, encoded as an i8
+* `vvvvvvvv` is the value element-type, encoded as an i8
+* `size` is the size of the map, encoded as an i32, positive values only
 * `key value pairs` are the encoded keys and values
 
 The element-type values are the same as field-types. The full list is included in the struct section above.
 
-The maximum map size is configurable. By default there is no limit (meaning the limit is the maximum int32 value:
+The maximum map size is configurable. By default there is no limit (meaning the limit is the maximum i32 value:
 2147483647).
