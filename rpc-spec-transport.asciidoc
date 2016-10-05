@@ -1,0 +1,22 @@
+== Framed vs. unframed transport
+
+The first thrift binary wire format was unframed. This means that information is sent out in a single stream of bytes.
+With unframed transport the (generated) processors will read directly from the socket (though Apache Thrift does try to
+grab all available bytes from the socket in a buffer when it can).
+
+Later, Thrift introduced the framed transport.
+
+With framed transport the full request and response (the message and the following struct) are first written to a
+buffer. Then when the struct is complete (transport method `flush` is hijacked for this), the length of the buffer is
+written to the socket first, followed by the buffered bytes. The combination is called a _frame_. On the receiver side
+the complete frame is first read in a buffer before the message is passed to a processor.
+
+The length prefix is a 4 byte signed int, send in network (big endian) order.
+The following must be true: `0` <= length <= `16384000` (16M).
+
+Framed transport was introduced to ease the implementation of async processors. An async processor is only invoked when
+all data is received. Unfortunately, framed transport is not ideal for large messages as the entire frame stays in
+memory until the message has been processed. In addition, the java implementation merges the incoming data to a single,
+growing byte array. Every time the byte array is full it needs to be copied to a new larger byte array.
+
+Framed and unframed transports are not compatible with each other.
