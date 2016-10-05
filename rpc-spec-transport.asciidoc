@@ -11,7 +11,7 @@ buffer. Then when the struct is complete (transport method `flush` is hijacked f
 written to the socket first, followed by the buffered bytes. The combination is called a _frame_. On the receiver side
 the complete frame is first read in a buffer before the message is passed to a processor.
 
-The length prefix is a 4 byte signed int, send in network (big endian) order.
+The length prefix is a 4 byte signed integer, send in network (big endian) order.
 The following must be true: `0` <= length <= `16384000` (16M).
 
 Framed transport was introduced to ease the implementation of async processors. An async processor is only invoked when

@@ -2,7 +2,7 @@
 
 === Integer encoding
 
-The _compact protocol_ uses multiple encodings for ints: the _zigzag int_, and the _var int_.
+The _compact protocol_ uses multiple encodings for integers: the _zigzag int_, and the _var int_.
 
 Values of type `i32` and `i64` are first transformed to a *zigzag int*. A zigzag int folds positive and negative
 numbers into the positive number space. When we read 0, 1, 2, 3, 4 or 5 from the wire, this is translated to 0, -1, 1,
@@ -163,8 +163,8 @@ Compact protocol list header (2+ bytes, long form) and elements:
 
 Where:
 
-* `ssss` is the size, 4 bit unsigned int, values `0` - `14`
-* `tttt` is the element-type, a 4 bit unsigned int
+* `ssss` is the size, 4 bit unsigned integer, values `0` - `14`
+* `tttt` is the element-type, a 4 bit unsigned integer
 * `size` is the size, a var int (i32), positive values `15` or higher
 * `elements` are the encoded elements
 
@@ -213,8 +213,8 @@ Compact protocol map header (2+ bytes, non empty map) and key value pairs:
 Where:
 
 * `size` is the size, a var int (i32), strictly positive values (size > 0)
-* `kkkk` is the key element-type, a 4 bit unsigned int
-* `vvvv` is the value element-type, a 4 bit unsigned int
+* `kkkk` is the key element-type, a 4 bit unsigned integer
+* `vvvv` is the value element-type, a 4 bit unsigned integer
 * `key value pairs` are the encoded keys and values
 
 The element-types are the same as for lists. The full list is included in the 'List and set' section.
