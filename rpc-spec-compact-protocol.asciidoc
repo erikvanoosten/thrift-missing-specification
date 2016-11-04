@@ -18,9 +18,20 @@ def zigzagToI64(n: Long): Long = (n >>> 1) ^ - (n & 1)
 
 The zigzag int is then encoded as a *var int*. Var ints take 1 to 5 bytes (i32) or 1 to 10 bytes (i64). The most
 significant bit of each byte indicates if more bytes follow. The concatenation of the least significant 7 bits from each
-byte form the number, where the first byte has the most significant bits (so they are in big endian or network order).
+byte form the number, where the first byte has the least significant bits (so they are in little endian order). The
+following table gives some examples of var int encoding.
 
-Var ints are sometimes used directly inside the compact protocol to represent numbers that are usually positive.
+....
+Input    Bytes
+-------  -----
+      0  0
+    127  127
+    128  128 1
+  12345  185 96
+1234567  135 173 75
+....
+
+Var ints are sometimes used directly inside the compact protocol to represent non-negative numbers.
 
 To encode an `i16` as zigzag int, it is first converted to an `i32` and then encoded as such. The type `i8` simply
 uses a single byte as in the binary protocol.
