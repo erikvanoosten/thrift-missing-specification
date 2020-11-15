@@ -1,3 +1,8 @@
+This document is now maintained by Apache Trift itself
+======================================================
+
+No maintenance intended.
+
 Thrift: The Missing Specification
 =================================
 Erik van Oosten <e.vanoosten@grons.nl>
