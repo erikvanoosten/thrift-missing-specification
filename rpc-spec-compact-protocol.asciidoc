@@ -54,7 +54,7 @@ Strings are first encoded to UTF-8, and then send as binary.
 === Double encoding
 
 Values of type `double` are first converted to an i64 according to the IEEE 754 floating-point "double format" bit
-layout. Most run-times provide primitives for the conversion. The i64 is encoded using 8 bytes in big endian order.
+layout. Most run-times provide primitives for the conversion. The i64 is encoded using 8 bytes in little endian order.
 
 This is some scala code showing the JVM primitives to convert from double to i64 and back:
 
