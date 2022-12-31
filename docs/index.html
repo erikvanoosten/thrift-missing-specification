@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta name="generator" content="AsciiDoc 8.6.9">
+<meta name="generator" content="AsciiDoc 9.1.1">
 <title>Thrift specification - Remote Procedure Call</title>
 <style type="text/css">
 /* Shared CSS for AsciiDoc xhtml11 and html5 backends */
@@ -432,7 +432,7 @@ thead, p.table.header {
 p.table {
   margin-top: 0;
 }
-/* Because the table frame attribute is overriden by CSS in most browsers. */
+/* Because the table frame attribute is overridden by CSS in most browsers. */
 div.tableblock > table[frame="void"] {
   border-style: none;
 }
@@ -897,27 +897,15 @@ asciidoc.install(2);
 </script>
 <meta name="description" content="The missing specification for Thrift RPC"/>
 <meta name="keywords" content="thrift,facebook,rpc,documentation,specification,binary protocol,compact protocol"/>
-
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-429873-8', 'auto');
-  ga('send', 'pageview');
-
-</script>
 </head>
 <body class="article">
 <div id="header">
 <h1>Thrift specification - Remote Procedure Call</h1>
 <span id="author">Erik van Oosten</span><br>
 <span id="email" class="monospaced">&lt;<a href="mailto:e.vanoosten@grons.nl">e.vanoosten@grons.nl</a>&gt;</span><br>
-<span id="revnumber">version 1.0,</span>
-<span id="revdate">2016-09-27</span>
-<br><span id="revremark">Initial version
-v1.1, 2016-10-05: Corrected integer type names. Small changes to section headers.</span>
+<span id="revnumber">version 1.2,</span>
+<span id="revdate">2021-10-21</span>
+<br><span id="revremark">Added "no maintenance intended" notice.</span>
 <div id="toc">
   <div id="toctitle">Table of Contents</div>
   <noscript><p><b>JavaScript must be enabled in your browser to display the table of contents.</b></p></noscript>
@@ -927,6 +915,13 @@ v1.1, 2016-10-05: Corrected integer type names. Small changes to section headers
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph"><p>The missing specification.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_no_maintenance_intended">No maintenance intended</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>This document has been adopted by the Thrift project at <a href="https://github.com/apache/thrift/tree/master/doc/specs">https://github.com/apache/thrift/tree/master/doc/specs</a> and is maintained there by the Thrift community. This copy will not receive any further updates.</p></div>
+<div class="paragraph"><p>Questions are best asked on the Thrift developers mailing list.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -1233,9 +1228,7 @@ noticeable performance boost because contemporary CPUs use little endian when st
 layout. Most run-times provide primitives for the conversion. The i64 is encoded using 8 bytes in big endian order.</p></div>
 <div class="paragraph"><p>This is some scala code showing the JVM primitives to convert from double to i64 and back:</p></div>
 <div class="listingblock">
-<div class="content"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="n">doubleToI64</span><span class="o">(</span><span class="n">d</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Long</span> <span class="o">=</span> <span class="n">java</span><span class="o">.</span><span class="n">lang</span><span class="o">.</span><span class="nc">Double</span><span class="o">.</span><span class="n">doubleToLongBits</span><span class="o">(</span><span class="n">d</span><span class="o">)</span>
-<span class="k">def</span> <span class="n">i64ToDouble</span><span class="o">(</span><span class="n">l</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="n">java</span><span class="o">.</span><span class="n">lang</span><span class="o">.</span><span class="nc">Double</span><span class="o">.</span><span class="n">longBitsToDouble</span><span class="o">(</span><span class="n">l</span><span class="o">)</span>
-</pre></div></div></div>
+<div class="content"></div></div>
 </div>
 <div class="sect2">
 <h3 id="_boolean_encoding">Boolean encoding</h3>
@@ -1502,11 +1495,7 @@ followed by the encoded elements. The encoding follows this BNF:</p></div>
 numbers into the positive number space. When we read 0, 1, 2, 3, 4 or 5 from the wire, this is translated to 0, -1, 1,
 -2 or 2 respectively. Here are the (Scala) formulas to convert from i32/i64 to a zigzag int and back:</p></div>
 <div class="listingblock">
-<div class="content"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="n">i32ToZigZag</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="o">(</span><span class="n">n</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span><span class="o">)</span> <span class="o">^</span> <span class="o">(</span><span class="n">n</span> <span class="o">&gt;&gt;</span> <span class="mi">31</span><span class="o">)</span>
-<span class="k">def</span> <span class="n">zigzagToInt32</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="o">(</span><span class="n">n</span> <span class="o">&gt;&gt;&gt;</span> <span class="mi">1</span><span class="o">)</span> <span class="o">^</span> <span class="o">-</span> <span class="o">(</span><span class="n">n</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="o">)</span>
-<span class="k">def</span> <span class="n">i64ToZigZag</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">Long</span> <span class="o">=</span> <span class="o">(</span><span class="n">n</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span><span class="o">)</span> <span class="o">^</span> <span class="o">(</span><span class="n">n</span> <span class="o">&gt;&gt;</span> <span class="mi">63</span><span class="o">)</span>
-<span class="k">def</span> <span class="n">zigzagToI64</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">Long</span> <span class="o">=</span> <span class="o">(</span><span class="n">n</span> <span class="o">&gt;&gt;&gt;</span> <span class="mi">1</span><span class="o">)</span> <span class="o">^</span> <span class="o">-</span> <span class="o">(</span><span class="n">n</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="o">)</span>
-</pre></div></div></div>
+<div class="content"></div></div>
 <div class="paragraph"><p>The zigzag int is then encoded as a <strong>var int</strong>. Var ints take 1 to 5 bytes (i32) or 1 to 10 bytes (i64). The most
 significant bit of each byte indicates if more bytes follow. The concatenation of the least significant 7 bits from each
 byte form the number, where the first byte has the most significant bits (so they are in big endian or network order).</p></div>
@@ -1553,9 +1542,7 @@ uses a single byte as in the binary protocol.</p></div>
 layout. Most run-times provide primitives for the conversion. The i64 is encoded using 8 bytes in big endian order.</p></div>
 <div class="paragraph"><p>This is some scala code showing the JVM primitives to convert from double to i64 and back:</p></div>
 <div class="listingblock">
-<div class="content"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="n">doubleToI64</span><span class="o">(</span><span class="n">d</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Long</span> <span class="o">=</span> <span class="n">java</span><span class="o">.</span><span class="n">lang</span><span class="o">.</span><span class="nc">Double</span><span class="o">.</span><span class="n">doubleToLongBits</span><span class="o">(</span><span class="n">d</span><span class="o">)</span>
-<span class="k">def</span> <span class="n">i64ToDouble</span><span class="o">(</span><span class="n">l</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="n">java</span><span class="o">.</span><span class="n">lang</span><span class="o">.</span><span class="nc">Double</span><span class="o">.</span><span class="n">longBitsToDouble</span><span class="o">(</span><span class="n">l</span><span class="o">)</span>
-</pre></div></div></div>
+<div class="content"></div></div>
 </div>
 <div class="sect2">
 <h3 id="_boolean_encoding_2">Boolean encoding</h3>
@@ -1955,8 +1942,9 @@ parenthesis <span class="monospaced">(</span> and <span class="monospaced">)</sp
 <div id="footnotes"><hr></div>
 <div id="footer">
 <div id="footer-text">
-Version 1.0<br>
-Last updated 2016-10-05 10:01:44 CEST
+Version 1.2<br>
+Last updated
+ 2021-10-21 09:38:24 CEST
 </div>
 </div>
 </body>

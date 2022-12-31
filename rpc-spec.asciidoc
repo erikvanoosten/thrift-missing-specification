@@ -4,6 +4,10 @@ v1.1, 2016-10-05: Corrected integer type names. Small changes to section headers
 
 The missing specification.
 
+== No maintenance intended
+
+This document has been adopted by the Thrift project at https://github.com/apache/thrift/tree/master/doc/specs and is maintained there by the Thrift community. This copy will not receive any further updates.
+
 == Introduction
 
 Thrift is a RPC mechanism that easily blends in with your code. It has a wonderful transport protocol that stays
